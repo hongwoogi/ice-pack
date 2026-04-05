@@ -1,0 +1,2129 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>아이스팩 — 맞춤형 수업 패키지</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700;800&family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+/* Paper texture data URI */
+:root {
+  --paper-texture: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.68' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='400' height='400' filter='url(%23n)' opacity='0.045'/%3E%3C/svg%3E");
+
+  /* Mantine-inspired palette */
+  --blue:    #228be6;
+  --blue-dk: #1971c2;
+  --blue-lt: #e7f5ff;
+  --blue-md: #74c0fc;
+  --blue2:   #1971c2;
+  --ice:     #f1f3f5;
+  --dark:    #212529;
+  --text:    #343a40;
+  --dim:     #495057;
+  --muted:   #868e96;
+  --border:  #dee2e6;
+  --card-b:  #e9ecef;
+  --card:    #faf9f7;   /* warm off-white */
+  --green:   #2f9e44;
+  --green-lt:#ebfbee;
+  --green-b: #b2f2bb;
+  --amber:   #e67700;
+  --red:     #c92a2a;
+  --radius:  10px;
+  --radius-sm: 6px;
+  --shadow:  0 1px 4px rgba(0,0,0,0.07), 0 1px 2px rgba(0,0,0,0.05);
+  --shadow-md: 0 4px 16px rgba(0,0,0,0.09), 0 2px 4px rgba(0,0,0,0.05);
+}
+
+body {
+  font-family: 'Noto Sans KR', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background: var(--ice);
+  color: var(--text);
+  min-height: 100vh;
+  font-size: 14px;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ══════════════════════════════════════════
+   LOGIN SCREEN
+══════════════════════════════════════════ */
+#screen-login {
+  min-height: 100vh;
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: var(--ice);
+}
+
+.login-header {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.login-logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.login-logo-icon {
+  width: 48px; height: 48px;
+  background: var(--blue);
+  border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.6rem;
+  box-shadow: 0 2px 8px rgba(34,139,230,0.35);
+}
+
+.login-logo-text {
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: var(--dark);
+  letter-spacing: -0.5px;
+}
+
+.login-logo-text span { color: var(--blue); }
+
+.login-sub {
+  font-size: 0.9rem;
+  color: var(--muted);
+  font-weight: 400;
+}
+
+.login-prompt {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--dim);
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.teacher-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: 14px;
+  width: 100%;
+  max-width: 760px;
+}
+
+.teacher-card {
+  background: var(--card);
+  background-image: var(--paper-texture);
+  border: 1px solid var(--card-b);
+  border-radius: var(--radius);
+  padding: 24px 20px;
+  cursor: pointer;
+  transition: box-shadow 0.18s, transform 0.12s;
+  box-shadow: var(--shadow);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  text-align: center;
+}
+
+.teacher-card:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+}
+
+.teacher-card:active {
+  transform: translateY(0);
+  box-shadow: var(--shadow);
+}
+
+.tc-avatar {
+  font-size: 2.2rem;
+  width: 60px; height: 60px;
+  background: var(--blue-lt);
+  border: 1px solid var(--blue-md);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+}
+
+.tc-name { font-size: 1.05rem; font-weight: 700; color: var(--dark); }
+.tc-school { font-size: 0.76rem; color: var(--muted); }
+.tc-badge {
+  background: var(--blue-lt);
+  color: var(--blue-dk);
+  border: 1px solid var(--blue-md);
+  border-radius: 999px;
+  padding: 3px 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+/* ══════════════════════════════════════════
+   DASHBOARD
+══════════════════════════════════════════ */
+#screen-dashboard { display: none; min-height: 100vh; flex-direction: column; }
+#screen-dashboard.visible { display: flex; }
+
+/* ── Top Nav ── */
+.topnav {
+  background: #fff;
+  color: var(--dark);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 24px;
+  height: 56px;
+  flex-shrink: 0;
+  border-bottom: 1px solid var(--card-b);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+
+.topnav-logo {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 1.05rem; font-weight: 800; letter-spacing: -0.3px;
+}
+
+.topnav-logo-icon {
+  width: 28px; height: 28px;
+  background: var(--blue);
+  border-radius: 7px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.95rem;
+  box-shadow: 0 1px 4px rgba(34,139,230,0.35);
+}
+
+.topnav-logo-text span { color: var(--blue); }
+
+.topnav-divider { width: 1px; height: 20px; background: var(--card-b); }
+
+.topnav-teacher {
+  font-size: 0.84rem;
+  color: var(--muted);
+}
+
+.topnav-teacher strong { color: var(--text); font-weight: 600; }
+
+.topnav-spacer { flex: 1; }
+
+.topnav-logout {
+  background: #fff;
+  border: 1px solid var(--card-b);
+  color: var(--dim);
+  border-radius: var(--radius-sm);
+  padding: 5px 12px;
+  font-size: 0.8rem;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.topnav-logout:hover { background: var(--ice); border-color: var(--border); }
+
+/* ── Dashboard Body ── */
+.dash-body {
+  flex: 1;
+  padding: 24px 20px;
+  max-width: 1100px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+/* Paper card base */
+.paper-card {
+  background-color: var(--card);
+  background-image: var(--paper-texture);
+  border: 1px solid var(--card-b);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+
+/* ── Progress Header ── */
+.progress-header {
+  background-color: var(--card);
+  background-image: var(--paper-texture);
+  border: 1px solid var(--card-b);
+  border-radius: var(--radius);
+  padding: 20px 24px;
+  margin-bottom: 20px;
+  box-shadow: var(--shadow);
+}
+
+.ph-top {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 14px;
+  flex-wrap: wrap;
+}
+
+.ph-avatar { font-size: 2rem; }
+
+.ph-info h2 {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--dark);
+}
+
+.ph-info p {
+  font-size: 0.8rem;
+  color: var(--muted);
+  margin-top: 2px;
+}
+
+.ph-spacer { flex: 1; }
+
+.ph-badge {
+  background: var(--blue-lt);
+  color: var(--blue-dk);
+  border: 1px solid var(--blue-md);
+  border-radius: 999px;
+  padding: 4px 14px;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.progress-unit {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--dim);
+  margin-bottom: 6px;
+}
+
+.progress-bar-wrap {
+  background: var(--blue-lt);
+  border-radius: 999px;
+  height: 8px;
+  overflow: hidden;
+}
+
+.progress-bar-fill {
+  height: 100%;
+  background: var(--blue);
+  border-radius: 999px;
+  transition: width 0.8s ease;
+}
+
+.progress-meta {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.74rem;
+  color: var(--muted);
+  margin-top: 5px;
+}
+
+/* ── Dashboard Grid ── */
+.dash-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20px;
+}
+
+@media (min-width: 860px) {
+  .dash-grid {
+    grid-template-columns: 1fr 360px;
+  }
+}
+
+/* ── Hero Suggestion Card ── */
+.hero-card {
+  background-color: var(--card);
+  background-image: var(--paper-texture);
+  border: 1px solid var(--card-b);
+  border-top: 3px solid var(--blue);
+  border-radius: var(--radius);
+  padding: 24px;
+  box-shadow: var(--shadow-md);
+  color: var(--text);
+  position: relative;
+}
+
+.hero-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--blue-lt);
+  border: 1px solid var(--blue-md);
+  border-radius: 999px;
+  padding: 3px 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--blue-dk);
+  margin-bottom: 14px;
+}
+
+.hero-title {
+  font-size: 1.25rem;
+  font-weight: 800;
+  letter-spacing: -0.3px;
+  margin-bottom: 4px;
+  color: var(--dark);
+}
+
+.hero-seq {
+  font-size: 0.8rem;
+  color: var(--muted);
+  margin-bottom: 10px;
+}
+
+.hero-goal {
+  font-size: 0.85rem;
+  color: var(--dim);
+  line-height: 1.55;
+  margin-bottom: 16px;
+}
+
+.hero-materials {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+
+.hero-mat-chip {
+  background: var(--ice);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 4px 10px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--dim);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.hero-reason {
+  background: #fff9db;
+  border: 1px solid #ffe066;
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-size: 0.8rem;
+  line-height: 1.55;
+  margin-bottom: 18px;
+  color: var(--dim);
+}
+
+.hero-reason::before {
+  content: '';
+}
+
+.hero-adopt-rate {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 18px;
+}
+
+.har-label { font-size: 0.78rem; color: var(--muted); white-space: nowrap; }
+
+.har-bar-wrap {
+  flex: 1;
+  background: var(--blue-lt);
+  border-radius: 999px;
+  height: 7px;
+  overflow: hidden;
+}
+
+.har-bar-fill {
+  height: 100%;
+  background: var(--blue);
+  border-radius: 999px;
+}
+
+.har-pct {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--blue-dk);
+}
+
+.hero-btn {
+  flex: 1;
+  min-width: 0;
+  background: var(--blue);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius);
+  padding: 12px 16px;
+  font-size: 0.92rem;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.15s, box-shadow 0.15s;
+  box-shadow: 0 2px 8px rgba(34,139,230,0.3);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.hero-btn-icon {
+  flex: 0 0 auto;
+  background: #fff;
+  border: 1px solid var(--green-b);
+  border-radius: var(--radius);
+  padding: 12px 14px;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.15s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.hero-btn-icon:hover { background: var(--green-lt); }
+
+.hero-btn:hover { background: var(--blue-dk); box-shadow: 0 4px 12px rgba(34,139,230,0.4); }
+.hero-btn:active { background: var(--blue-dk); box-shadow: 0 1px 4px rgba(34,139,230,0.3); }
+
+/* ── Left / Right Column ── */
+.left-col  { display: flex; flex-direction: column; gap: 20px; }
+.right-col { display: flex; flex-direction: column; gap: 20px; }
+
+/* ── Topnav progress pill ── */
+.topnav-progress-pill {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--blue-dk);
+  background: var(--blue-lt);
+  border: 1px solid var(--blue-md);
+  border-radius: 999px;
+  padding: 3px 12px;
+}
+
+/* ── Curriculum Card ── */
+.curriculum-card {
+  background-color: var(--card);
+  background-image: var(--paper-texture);
+  border: 1px solid var(--card-b);
+  border-radius: var(--radius);
+  padding: 16px;
+  box-shadow: var(--shadow);
+  max-height: 480px;
+  overflow-y: auto;
+}
+
+.curr-unit {
+  margin-bottom: 4px;
+}
+
+.curr-unit-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: background 0.12s;
+  user-select: none;
+}
+
+.curr-unit-header:hover { background: var(--ice); }
+
+.curr-unit-dot {
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.curr-unit-title {
+  flex: 1;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--dark);
+}
+
+.curr-unit-badge {
+  font-size: 0.68rem;
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+.curr-unit-chevron {
+  color: var(--muted);
+  transition: transform 0.15s;
+  font-size: 0.9rem;
+}
+
+.curr-unit.open .curr-unit-chevron { transform: rotate(90deg); }
+
+.curr-lessons {
+  display: none;
+  flex-direction: column;
+  padding-left: 28px;
+  margin-bottom: 4px;
+}
+
+.curr-unit.open .curr-lessons { display: flex; }
+
+.curr-lesson-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 8px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: background 0.12s;
+  font-size: 0.78rem;
+  color: var(--dim);
+}
+
+.curr-lesson-item:hover { background: var(--ice); }
+
+.curr-lesson-item.active {
+  background: var(--blue-lt);
+  color: var(--blue-dk);
+  font-weight: 600;
+}
+
+.curr-lesson-item.done { color: var(--muted); }
+
+.curr-lesson-icon { font-size: 0.75rem; flex-shrink: 0; }
+
+/* ── Recent Completed ── */
+.recent-card {
+  background-color: var(--card);
+  background-image: var(--paper-texture);
+  border: 1px solid var(--card-b);
+  border-radius: var(--radius);
+  padding: 20px;
+  box-shadow: var(--shadow);
+}
+
+/* ── Lesson type badge ── */
+.lesson-type-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  border-radius: 999px;
+  padding: 2px 9px;
+  border: 1px solid;
+}
+.ltb-intro    { background: #e7f5ff; color: #1971c2; border-color: #74c0fc; }
+.ltb-learn    { background: #ebfbee; color: #2f9e44; border-color: #b2f2bb; }
+.ltb-activity { background: #fff3bf; color: #e67700; border-color: #ffe066; }
+.ltb-play     { background: #f3d9fa; color: #9c36b5; border-color: #da77f2; }
+.ltb-review   { background: #ffe3e3; color: #c92a2a; border-color: #ffa8a8; }
+
+/* ── Insights Card ── */
+.insights-card {
+  background-color: var(--card);
+  background-image: var(--paper-texture);
+  border: 1px solid var(--card-b);
+  border-radius: var(--radius);
+  padding: 20px;
+  box-shadow: var(--shadow);
+}
+
+.card-title {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.adopt-rate-big {
+  font-size: 2.2rem;
+  font-weight: 800;
+  color: var(--blue);
+  letter-spacing: -1px;
+}
+
+.adopt-rate-sub {
+  font-size: 0.76rem;
+  color: var(--muted);
+  margin-bottom: 16px;
+}
+
+.pref-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.pref-label {
+  font-size: 0.76rem;
+  font-weight: 500;
+  color: var(--dim);
+  width: 64px;
+  flex-shrink: 0;
+}
+
+.pref-bar-wrap {
+  flex: 1;
+  background: var(--ice);
+  border-radius: 999px;
+  height: 7px;
+  overflow: hidden;
+}
+
+.pref-bar-fill {
+  height: 100%;
+  background: var(--blue);
+  border-radius: 999px;
+  transition: width 0.6s ease;
+}
+
+.pref-pct {
+  font-size: 0.74rem;
+  font-weight: 600;
+  color: var(--blue-dk);
+  width: 30px;
+  text-align: right;
+}
+
+.insights-summary {
+  margin-top: 14px;
+  padding: 10px 12px;
+  background: var(--blue-lt);
+  border: 1px solid var(--blue-md);
+  border-radius: 8px;
+  font-size: 0.78rem;
+  color: var(--dim);
+  line-height: 1.55;
+}
+
+/* ── History Card ── */
+.history-card {
+  background-color: var(--card);
+  background-image: var(--paper-texture);
+  border: 1px solid var(--card-b);
+  border-radius: var(--radius);
+  padding: 20px;
+  box-shadow: var(--shadow);
+}
+
+.history-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--ice);
+}
+
+.history-item:last-child { border-bottom: none; }
+
+.hi-dot {
+  width: 26px; height: 26px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.8rem;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.hi-dot.adopted { background: var(--green-lt); color: var(--green); }
+.hi-dot.skipped { background: #fff3bf; color: var(--amber); }
+
+.hi-info { flex: 1; }
+
+.hi-title {
+  font-size: 0.83rem;
+  font-weight: 600;
+  color: var(--dark);
+  margin-bottom: 3px;
+}
+
+.hi-meta {
+  font-size: 0.72rem;
+  color: var(--muted);
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.hi-tag {
+  background: var(--blue-lt);
+  color: var(--blue-dk);
+  border: 1px solid var(--blue-md);
+  border-radius: 999px;
+  padding: 1px 7px;
+}
+
+/* ══════════════════════════════════════════
+   PACKAGE MODAL
+══════════════════════════════════════════ */
+.modal-backdrop {
+  position: fixed; inset: 0;
+  background: rgba(33,37,41,0.45);
+  backdrop-filter: blur(4px);
+  display: flex; align-items: flex-end; justify-content: center;
+  z-index: 100;
+  opacity: 0; pointer-events: none;
+  transition: opacity 0.2s;
+}
+
+.modal-backdrop.open {
+  opacity: 1; pointer-events: all;
+}
+
+@media (min-width: 600px) {
+  .modal-backdrop { align-items: center; }
+}
+
+.modal-sheet {
+  background-color: var(--card);
+  background-image: var(--paper-texture);
+  border: 1px solid var(--card-b);
+  border-radius: 16px 16px 0 0;
+  width: 100%;
+  max-width: 640px;
+  max-height: 92vh;
+  overflow-y: auto;
+  padding: 24px 24px 32px;
+  transform: translateY(40px);
+  transition: transform 0.25s ease;
+  box-shadow: 0 -4px 24px rgba(0,0,0,0.12);
+}
+
+@media (min-width: 600px) {
+  .modal-sheet { border-radius: 16px; box-shadow: 0 8px 40px rgba(0,0,0,0.18); }
+}
+
+.modal-backdrop.open .modal-sheet { transform: translateY(0); }
+
+.modal-handle {
+  width: 36px; height: 4px;
+  background: var(--card-b);
+  border-radius: 999px;
+  margin: 0 auto 20px;
+}
+
+@media (min-width: 600px) { .modal-handle { display: none; } }
+
+.modal-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.modal-header-info { flex: 1; }
+
+.modal-unit {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--blue);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+
+.modal-title {
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: var(--dark);
+  line-height: 1.25;
+  margin-bottom: 4px;
+}
+
+.modal-seq { font-size: 0.78rem; color: var(--muted); }
+
+.modal-close {
+  background: var(--ice);
+  border: 1px solid var(--card-b);
+  border-radius: 8px;
+  width: 34px; height: 34px;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  font-size: 1rem;
+  flex-shrink: 0;
+  transition: background 0.15s;
+}
+
+.modal-close:hover { background: var(--card-b); }
+
+.modal-goal {
+  background: var(--blue-lt);
+  border: 1px solid var(--blue-md);
+  border-radius: 8px;
+  padding: 11px 14px;
+  font-size: 0.84rem;
+  color: var(--dim);
+  line-height: 1.55;
+  margin-bottom: 18px;
+}
+
+.modal-goal::before { content: '학습 목표: '; font-weight: 700; color: var(--blue-dk); }
+
+.section-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 10px;
+}
+
+/* ══ Quiz Generator Card ══════════════════════════════════════════ */
+.quiz-gen-card {
+  background-color: var(--card);
+  background-image: var(--paper-texture);
+  border: 1px solid var(--card-b);
+  border-radius: var(--radius);
+  padding: 20px;
+  box-shadow: var(--shadow);
+}
+
+.quiz-gen-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.quiz-gen-icon {
+  font-size: 1.3rem;
+  width: 38px; height: 38px;
+  background: var(--blue-lt);
+  border: 1px solid var(--blue-md);
+  border-radius: 9px;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+
+.quiz-gen-title { font-size: 0.92rem; font-weight: 700; color: var(--dark); }
+.quiz-gen-sub   { font-size: 0.75rem; color: var(--muted); margin-top: 2px; }
+
+.quiz-gen-row {
+  display: flex;
+  gap: 8px;
+}
+
+.quiz-gen-input {
+  flex: 1;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 9px 12px;
+  font-size: 0.88rem;
+  font-family: inherit;
+  color: var(--dark);
+  background: #fff;
+  outline: none;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.quiz-gen-input:focus {
+  border-color: var(--blue);
+  box-shadow: 0 0 0 2px rgba(34,139,230,0.15);
+}
+
+.quiz-gen-btn {
+  background: var(--blue);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius-sm);
+  padding: 9px 16px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  font-family: inherit;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.15s, box-shadow 0.15s;
+  box-shadow: 0 1px 4px rgba(34,139,230,0.25);
+}
+
+.quiz-gen-btn:hover  { background: var(--blue-dk); box-shadow: 0 2px 8px rgba(34,139,230,0.35); }
+.quiz-gen-btn:active { background: var(--blue-dk); }
+.quiz-gen-btn:disabled { opacity: 0.5; cursor: not-allowed; box-shadow: none; }
+
+.quiz-gen-status {
+  margin-top: 10px;
+  font-size: 0.8rem;
+  color: var(--muted);
+  min-height: 18px;
+}
+
+.quiz-gen-results { margin-top: 10px; display: flex; flex-direction: column; gap: 8px; }
+
+.quiz-result-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--blue-lt);
+  border: 1px solid var(--blue-md);
+  border-radius: 8px;
+  padding: 10px 12px;
+}
+
+.qr-topic { flex: 1; font-size: 0.85rem; font-weight: 600; color: var(--dark); }
+.qr-count { font-size: 0.73rem; color: var(--muted); }
+
+.qr-share-btn {
+  background: #fff;
+  border: 1px solid var(--blue-md);
+  border-radius: var(--radius-sm);
+  padding: 4px 11px;
+  font-size: 0.76rem;
+  font-weight: 600;
+  color: var(--blue-dk);
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.12s;
+}
+
+.qr-share-btn:hover { background: var(--blue-lt); }
+
+.materials-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px; }
+
+.material-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: #fff;
+  border: 1px solid var(--card-b);
+  border-radius: 8px;
+  padding: 12px 14px;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s, box-shadow 0.15s;
+  text-decoration: none;
+  color: inherit;
+}
+
+.material-item:hover {
+  border-color: var(--blue-md);
+  background: var(--blue-lt);
+  box-shadow: 0 1px 4px rgba(34,139,230,0.12);
+}
+
+.mat-icon { font-size: 1.4rem; flex-shrink: 0; }
+
+.mat-info { flex: 1; }
+.mat-title { font-size: 0.9rem; font-weight: 700; color: var(--dark); }
+.mat-sub { font-size: 0.75rem; color: var(--muted); margin-top: 2px; }
+
+.mat-arrow { color: var(--muted); font-size: 1rem; }
+
+/* ── Thinkbell Section ── */
+.thinkbell-section {
+  background: var(--green-lt);
+  border: 1px solid var(--green-b);
+  border-radius: var(--radius);
+  padding: 16px;
+  margin-bottom: 20px;
+}
+
+.thinkbell-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #1a6330;
+  margin-bottom: 10px;
+}
+
+.thinkbell-logo {
+  background: var(--green);
+  color: #fff;
+  border-radius: var(--radius-sm);
+  padding: 2px 8px;
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+
+.thinkbell-btns { display: flex; flex-direction: column; gap: 8px; }
+
+.thinkbell-btn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #fff;
+  border: 1px solid var(--green-b);
+  border-radius: 8px;
+  padding: 11px 14px;
+  cursor: pointer;
+  text-decoration: none;
+  color: var(--dark);
+  font-family: inherit;
+  font-size: 0.85rem;
+  font-weight: 600;
+  transition: background 0.15s, border-color 0.15s;
+  text-align: left;
+}
+
+.thinkbell-btn:hover { background: var(--green-lt); border-color: var(--green); }
+
+.thinkbell-btn-icon { font-size: 1.1rem; flex-shrink: 0; }
+.thinkbell-btn-title { flex: 1; }
+.thinkbell-btn-badge {
+  font-size: 0.68rem;
+  font-weight: 600;
+  background: var(--green-lt);
+  color: #1a6330;
+  border: 1px solid var(--green-b);
+  border-radius: 999px;
+  padding: 2px 8px;
+}
+
+.thinkbell-btn-arrow { color: var(--muted); font-size: 0.85rem; }
+
+/* ── Modal CTA ── */
+.modal-cta {
+  display: flex;
+  gap: 10px;
+  margin-top: 6px;
+}
+
+.btn-adopt {
+  flex: 2;
+  background: var(--blue);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius);
+  padding: 12px;
+  font-size: 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: inherit;
+  box-shadow: 0 2px 8px rgba(34,139,230,0.3);
+  transition: background 0.15s, box-shadow 0.15s;
+}
+
+.btn-adopt:hover { background: var(--blue-dk); box-shadow: 0 4px 12px rgba(34,139,230,0.4); }
+.btn-adopt:active { background: var(--blue-dk); }
+
+.btn-skip {
+  flex: 1;
+  background: #fff;
+  color: var(--muted);
+  border: 1px solid var(--card-b);
+  border-radius: var(--radius);
+  padding: 12px;
+  font-size: 0.88rem;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.15s;
+}
+
+.btn-skip:hover { background: var(--ice); }
+
+/* ══════════════════════════════════════════
+   ADOPT SUCCESS OVERLAY
+══════════════════════════════════════════ */
+.adopt-overlay {
+  position: fixed; inset: 0;
+  background: rgba(33,37,41,0.5);
+  backdrop-filter: blur(6px);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 200;
+  opacity: 0; pointer-events: none;
+  transition: opacity 0.2s;
+}
+
+.adopt-overlay.open { opacity: 1; pointer-events: all; }
+
+.adopt-card {
+  background-color: var(--card);
+  background-image: var(--paper-texture);
+  border: 1px solid var(--card-b);
+  border-radius: 16px;
+  padding: 40px 32px;
+  text-align: center;
+  max-width: 360px;
+  width: 90%;
+  box-shadow: 0 12px 40px rgba(0,0,0,0.18);
+  transform: scale(0.88);
+  transition: transform 0.25s ease;
+}
+
+.adopt-overlay.open .adopt-card { transform: scale(1); }
+
+.adopt-check {
+  width: 68px; height: 68px;
+  background: var(--green-lt);
+  border: 1px solid var(--green-b);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 2rem;
+  margin: 0 auto 18px;
+}
+
+.adopt-title {
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: var(--dark);
+  margin-bottom: 8px;
+}
+
+.adopt-sub {
+  font-size: 0.85rem;
+  color: var(--muted);
+  line-height: 1.55;
+  margin-bottom: 24px;
+}
+
+.adopt-next-btn {
+  width: 100%;
+  background: var(--blue);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius);
+  padding: 12px;
+  font-size: 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: inherit;
+  box-shadow: 0 2px 8px rgba(34,139,230,0.3);
+  transition: background 0.15s, box-shadow 0.15s;
+}
+
+.adopt-next-btn:hover { background: var(--blue-dk); box-shadow: 0 4px 12px rgba(34,139,230,0.4); }
+
+/* ══════════════════════════════════════════
+   MATERIAL SYMBOLS
+══════════════════════════════════════════ */
+.ms {
+  font-family: 'Material Symbols Outlined';
+  font-weight: normal; font-style: normal;
+  display: inline-flex; align-items: center; justify-content: center;
+  line-height: 1;
+  user-select: none;
+  flex-shrink: 0;
+  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 20;
+}
+.ms-fill { font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 20; }
+.ms-14 { font-size: 14px; }
+.ms-16 { font-size: 16px; }
+.ms-18 { font-size: 18px; }
+.ms-20 { font-size: 20px; }
+.ms-22 { font-size: 22px; }
+.ms-24 { font-size: 24px; }
+.ms-32 { font-size: 32px; }
+.ms-40 { font-size: 40px; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.rotating { display: inline-block; animation: spin 1s linear infinite; }
+
+/* ── Timetable ─────────────────────────────────────────────── */
+.tt-card {
+  background: var(--card);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 18px 20px 20px;
+  margin-bottom: 20px;
+}
+.tt-card-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+.tt-card-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text);
+}
+.tt-week-label {
+  font-size: 12px;
+  color: var(--muted);
+  margin-left: auto;
+  background: var(--ice);
+  border-radius: 20px;
+  padding: 3px 10px;
+}
+.tt-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 3px;
+}
+.tt-table th {
+  font-size: 12px;
+  font-weight: 700;
+  text-align: center;
+  padding: 6px 4px;
+  color: var(--muted);
+  width: calc(100% / 6);
+}
+.tt-table th.tt-today-head {
+  color: var(--blue);
+  background: var(--blue-lt);
+  border-radius: 6px;
+}
+.tt-table td {
+  text-align: center;
+  padding: 5px 3px;
+  font-size: 11px;
+  border-radius: 6px;
+  color: #868e96;
+  background: var(--ice);
+  height: 42px;
+  vertical-align: middle;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.tt-table td.tt-period {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--muted);
+  background: transparent;
+  width: 28px;
+}
+.tt-table td.tt-empty {
+  background: transparent;
+  color: #dee2e6;
+}
+.tt-table td.tt-today-col {
+  background: #f0f7ff;
+}
+.tt-math {
+  cursor: pointer;
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1.3;
+  padding: 4px 5px !important;
+  transition: filter .15s, transform .1s;
+  position: relative;
+}
+.tt-math:hover { filter: brightness(.93); transform: scale(1.04); }
+.tt-math:active { transform: scale(.97); }
+.tt-math-title {
+  display: block;
+  font-size: 10px;
+  font-weight: 500;
+  opacity: .85;
+  margin-top: 2px;
+  white-space: normal;
+  line-height: 1.2;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+.tt-math-done { opacity: .65; }
+.tt-math-current { box-shadow: 0 0 0 2px #fff, 0 0 0 4px currentColor; }
+
+/* Logo icon */
+.logo-icon {
+  width: 30px; height: 30px;
+  background: var(--blue);
+  border-radius: 7px;
+  display: flex; align-items: center; justify-content: center;
+  color: #fff;
+  box-shadow: 0 1px 4px rgba(34,139,230,0.35);
+}
+
+/* Avatar circle */
+.avatar-circle {
+  background: var(--blue-lt);
+  border: 1px solid var(--blue-md);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--blue-dk);
+  flex-shrink: 0;
+}
+</style>
+</head>
+<body>
+
+<!-- ════════════════════════════════════════
+     LOGIN
+════════════════════════════════════════ -->
+<div id="screen-login">
+  <div class="login-header">
+    <div class="login-logo">
+      <div class="login-logo-icon"><span class="ms ms-32 ms-fill" style="color:#fff">ac_unit</span></div>
+      <div class="login-logo-text">아이스<span>팩</span></div>
+    </div>
+    <div class="login-sub">아이스크림미디어 × 맞춤형 수업 패키지 제안 서비스</div>
+  </div>
+
+  <div class="login-prompt">선생님 프로필을 선택하세요</div>
+
+  <div class="teacher-cards" id="teacher-cards"></div>
+</div>
+
+<!-- ════════════════════════════════════════
+     DASHBOARD
+════════════════════════════════════════ -->
+<div id="screen-dashboard">
+  <nav class="topnav">
+    <div class="topnav-logo">
+      <div class="logo-icon"><span class="ms ms-20 ms-fill">ac_unit</span></div>
+      <div class="topnav-logo-text">아이스<span>팩</span></div>
+    </div>
+    <div class="topnav-divider"></div>
+    <div class="topnav-teacher" id="topnav-teacher-info">
+      <strong>5학년 1학기</strong> · 수학
+    </div>
+    <div class="topnav-spacer"></div>
+    <div class="topnav-progress-pill" id="topnav-progress-pill"></div>
+  </nav>
+
+  <div class="dash-body">
+    <!-- Progress -->
+    <div class="progress-header" id="progress-header"></div>
+
+    <!-- Timetable -->
+    <div id="timetable-section"></div>
+
+    <!-- Grid -->
+    <div class="dash-grid">
+      <!-- Left: Hero + Recent -->
+      <div class="left-col">
+        <div id="hero-section"></div>
+        <div id="recent-section"></div>
+      </div>
+
+      <!-- Right: Curriculum + Quiz -->
+      <div class="right-col">
+        <div class="curriculum-card" id="curriculum-card"></div>
+
+        <!-- Quiz Generator -->
+        <div class="quiz-gen-card">
+          <div class="quiz-gen-header">
+            <div class="quiz-gen-icon"><span class="ms ms-24">smart_toy</span></div>
+            <div>
+              <div class="quiz-gen-title">AI 퀴즈 생성기</div>
+              <div class="quiz-gen-sub">차시 주제 → 10문항 자동 생성 → 띵커벨 등록</div>
+            </div>
+          </div>
+          <div class="quiz-gen-row">
+            <input class="quiz-gen-input" id="quiz-gen-input" type="text"
+              placeholder="예: 약수와 배수, 분수의 덧셈…" maxlength="80">
+            <button class="quiz-gen-btn" id="quiz-gen-btn">생성</button>
+          </div>
+          <div class="quiz-gen-status" id="quiz-gen-status"></div>
+          <div class="quiz-gen-results" id="quiz-gen-results"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════
+     PACKAGE MODAL
+════════════════════════════════════════ -->
+<div class="modal-backdrop" id="pkg-modal">
+  <div class="modal-sheet" id="modal-sheet">
+    <div class="modal-handle"></div>
+    <div id="modal-content"></div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════
+     ADOPT SUCCESS
+════════════════════════════════════════ -->
+<div class="adopt-overlay" id="adopt-overlay">
+  <div class="adopt-card">
+    <div class="adopt-check"><span class="ms ms-40 ms-fill" style="color:var(--green)">check_circle</span></div>
+    <div class="adopt-title">패키지를 채택했어요!</div>
+    <div class="adopt-sub">수업 자료가 준비됐어요.<br>다음 차시 패키지를 이미 준비하고 있어요.</div>
+    <button class="adopt-next-btn" id="adopt-next-btn">다음 차시 패키지 보기 →</button>
+  </div>
+</div>
+
+<script src="data/mock.js"></script>
+<script>
+'use strict';
+
+/* ──────────────────────────────────────────
+   Helpers
+────────────────────────────────────────── */
+function materialIcon(type) {
+  const map = {
+    video: 'play_circle', slide: 'slideshow', worksheet: 'description',
+    textbook: 'menu_book', link: 'link', activity: 'extension',
+  };
+  return map[type] || 'article';
+}
+
+function lessonTypeLabel(type) {
+  return { intro: '단원 도입', learn: '개념학습', activity: '창의활동', play: '놀이활동', review: '단원평가' }[type] || type;
+}
+
+function lessonTypeCls(type) {
+  return { intro: 'ltb-intro', learn: 'ltb-learn', activity: 'ltb-activity', play: 'ltb-play', review: 'ltb-review' }[type] || '';
+}
+
+function lessonTypeIcon(type) {
+  return { intro: 'flag', learn: 'school', activity: 'lightbulb', play: 'sports_esports', review: 'fact_check' }[type] || 'article';
+}
+
+/* ──────────────────────────────────────────
+   Dashboard Entry
+────────────────────────────────────────── */
+function boot() {
+  document.getElementById('screen-login').style.display = 'none';
+  document.getElementById('screen-dashboard').classList.add('visible');
+  renderDashboard();
+}
+
+function renderDashboard() {
+  renderProgressHeader();
+  renderTopnavPill();
+  renderTimetable();
+  renderHero();
+  renderRecentCompleted();
+  renderCurriculumPanel();
+}
+
+/* ──────────────────────────────────────────
+   Weekly Timetable
+────────────────────────────────────────── */
+const TIMETABLE_GRID = [
+  //  월       화       수       목       금
+  ['국어',  '과학',  '영어',  '국어',  '국어'],   // 1교시
+  ['국어',  '과학',  '사회',  '수학',  '체육'],   // 2교시
+  ['영어',  '사회',  '체육',  '과학',  '영어'],   // 3교시
+  ['체육',  '미술',  '국어',  '실과',  '실과'],   // 4교시
+  ['사회',  '미술',  '수학',  '음악',  '음악'],   // 5교시
+  ['도덕',  '수학',  '',      '사회',  '수학'],   // 6교시
+];
+const DAYS_KO = ['월', '화', '수', '목', '금'];
+// 수학 슬롯: { day: 0=월…4=금, period: 0-indexed }  순서 = 이 주의 수학 수업 순서
+const MATH_SLOTS = [
+  { day: 1, period: 5 }, // 화 6교시
+  { day: 2, period: 4 }, // 수 5교시
+  { day: 3, period: 1 }, // 목 2교시
+  { day: 4, period: 5 }, // 금 6교시
+];
+// 오늘 요일(1=Mon…5=Fri) → 수학 슬롯 index (-1 = 오늘 수학 없음)
+const DOW_TO_SLOT = { 2: 0, 3: 1, 4: 2, 5: 3 }; // JS getDay: 0=Sun
+
+function renderTimetable() {
+  const progress     = MOCK.getProgress();
+  const currentIdx   = progress.currentIdx;
+  const completedSet = MOCK.getCompletedSet();
+  const quizUrls     = MOCK.getQuizUrls();
+
+  // 오늘의 수학 슬롯 index 결정
+  const dow         = new Date().getDay(); // 0=Sun
+  const todaySlot   = DOW_TO_SLOT[dow] ?? -1;
+  const todayDayIdx = dow === 0 ? -1 : dow - 1; // 0=월…4=금, -1=Sun
+
+  // 이번 주에서 오늘 이전까지 지난 수학 슬롯 수
+  // (주말/월 = 0, 화 = 0번 지남, 수 = 1번 지남, 목 = 2번 지남, 금 = 3번 지남)
+  const passedSlots = todaySlot >= 0 ? todaySlot : 0;
+
+  // 각 슬롯에 해당하는 전체 차시 index
+  const slotLessons = MATH_SLOTS.map((slot, i) => {
+    const li = currentIdx - passedSlots + i;
+    const lesson = (li >= 0 && li < MOCK.ALL_LESSONS.length) ? MOCK.ALL_LESSONS[li] : null;
+    return {
+      ...slot,
+      lesson,
+      lessonIdx: li,
+      isPast:      i < passedSlots,
+      isCurrent:   li === currentIdx,
+      isCompleted: lesson && completedSet.has(lesson.id),
+      hasQuiz:     lesson && !!quizUrls[lesson.id],
+    };
+  });
+
+  // 헤더 레이블 (이번 주 / 다음 주)
+  const isWeekend = dow === 0 || dow === 6;
+  const weekLabel = isWeekend ? '다음 주 수학 수업' : '이번 주 수학 수업';
+
+  // 테이블 렌더
+  const theadCols = ['', ...DAYS_KO].map((d, i) => {
+    if (i === 0) return `<th></th>`;
+    const dayIdx = i - 1;
+    const isToday = dayIdx === todayDayIdx;
+    return `<th class="${isToday ? 'tt-today-head' : ''}">${d}${isToday ? '<br><span style="font-size:9px;font-weight:400">오늘</span>' : ''}</th>`;
+  }).join('');
+
+  const tbodyRows = TIMETABLE_GRID.map((row, period) => {
+    const cols = row.map((subj, dayIdx) => {
+      const isToday = dayIdx === todayDayIdx;
+      if (!subj) return `<td class="tt-empty ${isToday ? 'tt-today-col' : ''}">-</td>`;
+
+      if (subj === '수학') {
+        const slotIdx = MATH_SLOTS.findIndex(s => s.day === dayIdx && s.period === period);
+        const sl = slotIdx >= 0 ? slotLessons[slotIdx] : null;
+        if (!sl || !sl.lesson) {
+          return `<td class="tt-math ${isToday ? 'tt-today-col' : ''}" style="opacity:.4;cursor:default">수학</td>`;
+        }
+        const unit = MOCK.UNITS.find(u => u.id === sl.lesson.unitId);
+        const color = unit ? unit.color : '#228be6';
+        const titleShort = sl.lesson.title.length > 14 ? sl.lesson.title.slice(0, 13) + '…' : sl.lesson.title;
+        const doneStyle = sl.isCompleted ? ' tt-math-done' : '';
+        const curStyle  = sl.isCurrent   ? ' tt-math-current' : '';
+        const quizDot   = sl.hasQuiz ? `<span style="position:absolute;top:3px;right:4px;width:5px;height:5px;border-radius:50%;background:#2f9e44;display:inline-block"></span>` : '';
+        return `
+          <td class="tt-math${doneStyle}${curStyle} ${isToday ? 'tt-today-col' : ''}"
+              style="background:${color}18;color:${color};position:relative"
+              onclick="timetableOpenLesson(${sl.lessonIdx})"
+              title="${sl.lesson.title} (${sl.lesson.globalSeq}차시)">
+            ${quizDot}
+            ${sl.isCompleted ? '<span class="ms ms-12 ms-fill" style="vertical-align:middle">check_circle</span> ' : sl.isCurrent ? '<span class="ms ms-10" style="vertical-align:middle">play_arrow</span> ' : ''}수학
+            <span class="tt-math-title">${titleShort}</span>
+          </td>`;
+      }
+
+      return `<td class="${isToday ? 'tt-today-col' : ''}">${subj}</td>`;
+    }).join('');
+
+    return `<tr><td class="tt-period">${period + 1}</td>${cols}</tr>`;
+  }).join('');
+
+  const mathSummary = slotLessons.filter(s => s.lesson).map(s => {
+    const u = MOCK.UNITS.find(u => u.id === s.lesson.unitId);
+    return `<span style="display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:20px;background:${u.color}15;color:${u.color};font-size:11px;font-weight:600;cursor:pointer"
+      onclick="timetableOpenLesson(${s.lessonIdx})">
+      ${DAYS_KO[s.day]}요일 ${s.lesson.globalSeq}차시
+      ${s.hasQuiz ? '<span class="ms ms-12 ms-fill" style="color:#2f9e44">check_circle</span>' : ''}
+    </span>`;
+  }).join('');
+
+  document.getElementById('timetable-section').innerHTML = `
+    <div class="tt-card">
+      <div class="tt-card-header">
+        <span class="ms ms-20" style="color:var(--blue)">calendar_today</span>
+        <span class="tt-card-title">${weekLabel}</span>
+        <span class="tt-week-label">수학 ${slotLessons.filter(s=>s.lesson).length}차시 예정</span>
+      </div>
+      <div style="overflow-x:auto">
+        <table class="tt-table">
+          <thead><tr>${theadCols}</tr></thead>
+          <tbody>${tbodyRows}</tbody>
+        </table>
+      </div>
+      <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:14px">${mathSummary}</div>
+    </div>
+  `;
+}
+
+function timetableOpenLesson(lessonIdx) {
+  const lesson = MOCK.ALL_LESSONS[lessonIdx];
+  if (!lesson) return;
+  MOCK.goToLesson(lesson.globalSeq);
+  renderDashboard();
+  const pkg  = MOCK.getPackage(lesson);
+  const unit = MOCK.UNITS.find(u => u.id === lesson.unitId);
+  openModal(lesson, pkg, unit);
+}
+
+/* ──────────────────────────────────────────
+   Progress Header
+────────────────────────────────────────── */
+function renderProgressHeader() {
+  const total     = MOCK.ALL_LESSONS.length;
+  const completed = MOCK.getCompletedSet();
+  const doneCnt   = completed.size;
+  const pct       = Math.round(doneCnt / total * 100);
+  const cur       = MOCK.getCurrentLesson();
+  const unit      = MOCK.UNITS.find(u => u.id === cur.unitId);
+  const unitDone  = unit.lessons.filter(l => completed.has(l.id)).length;
+  const unitPct   = Math.round(unitDone / unit.totalLessons * 100);
+
+  document.getElementById('progress-header').innerHTML = `
+    <div class="ph-top">
+      <div class="avatar-circle" style="width:44px;height:44px">
+        <span class="ms ms-24">calculate</span>
+      </div>
+      <div class="ph-info">
+        <h2>5학년 1학기 수학 진도 현황</h2>
+        <p>전체 ${total}차시 중 ${doneCnt}차시 완료</p>
+      </div>
+      <div class="ph-spacer"></div>
+      <div class="ph-badge">전체 ${pct}%</div>
+    </div>
+    <div class="progress-unit">현재 단원: ${unit.title} (${unitDone}/${unit.totalLessons}차시)</div>
+    <div class="progress-bar-wrap" style="margin-bottom:6px">
+      <div class="progress-bar-fill" style="width:${unitPct}%;background:${unit.color}"></div>
+    </div>
+    <div class="progress-meta">
+      <span>${unit.title}</span>
+      <span>${unitDone}/${unit.totalLessons}차시 · ${unitPct}% 완료</span>
+    </div>
+  `;
+}
+
+function renderTopnavPill() {
+  const total   = MOCK.ALL_LESSONS.length;
+  const done    = MOCK.getCompletedSet().size;
+  const cur     = MOCK.getCurrentLesson();
+  document.getElementById('topnav-progress-pill').textContent =
+    `${done}/${total}차시 완료 · 현재 ${cur.globalSeq}차시`;
+}
+
+/* ──────────────────────────────────────────
+   Hero — Current Lesson Package
+────────────────────────────────────────── */
+function renderHero() {
+  const lesson  = MOCK.getCurrentLesson();
+  if (!lesson) return;
+  const pkg     = MOCK.getPackage(lesson);
+  const unit    = MOCK.UNITS.find(u => u.id === lesson.unitId);
+  const completed = MOCK.getCompletedSet();
+
+  const matChips = pkg.materials.map(m =>
+    `<div class="hero-mat-chip"><span class="ms ms-16">${materialIcon(m.type)}</span> ${m.title.length > 16 ? m.title.slice(0,16)+'…' : m.title}</div>`
+  ).join('');
+
+  const isLastLesson = lesson.globalSeq >= MOCK.ALL_LESSONS.length;
+
+  document.getElementById('hero-section').innerHTML = `
+    <div class="hero-card">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;flex-wrap:wrap">
+        <div class="hero-label" style="background:${unit.color}15;border-color:${unit.color}60;color:${unit.color}">
+          <span class="ms ms-16 ms-fill" style="color:${unit.color}">${lessonTypeIcon(lesson.type)}</span>
+          ${unit.shortTitle}
+        </div>
+        <span class="lesson-type-badge ${lessonTypeCls(lesson.type)}">${lessonTypeLabel(lesson.type)}</span>
+      </div>
+
+      <div class="hero-seq">${lesson.globalSeq}차시 · 교과서 ${lesson.pages}쪽</div>
+      <div class="hero-title">${lesson.title}</div>
+
+      <div class="hero-materials" style="margin-top:14px">${matChips}</div>
+
+      <div class="hero-reason" style="margin-top:12px">${pkg.reason}</div>
+
+      <div class="hero-adopt-rate" style="margin-top:14px">
+        <span class="har-label">예상 채택률</span>
+        <div class="har-bar-wrap"><div class="har-bar-fill" style="width:${pkg.estimatedAdoptRate}%;background:${unit.color}"></div></div>
+        <span class="har-pct" style="color:${unit.color}">${pkg.estimatedAdoptRate}%</span>
+      </div>
+
+      <div style="display:flex;gap:8px;margin-top:16px;align-items:center">
+        <button class="hero-btn" id="btn-open-pkg" style="background:${unit.color};box-shadow:0 2px 8px ${unit.color}40">
+          <span class="ms ms-18" style="vertical-align:middle;margin-right:4px">open_in_new</span> 수업 자료 꾸러미 열기
+        </button>
+        <button class="hero-btn-icon" id="btn-complete-lesson" title="차시 완료">
+          <span class="ms ms-22 ms-fill" style="color:var(--green)">${isLastLesson ? 'flag' : 'check_circle'}</span>
+        </button>
+      </div>
+    </div>
+  `;
+
+  document.getElementById('btn-open-pkg').addEventListener('click', () => openModal(lesson, pkg, unit));
+  document.getElementById('btn-complete-lesson').addEventListener('click', () => completeLesson(lesson.id));
+}
+
+/* ──────────────────────────────────────────
+   Recent Completed Lessons
+────────────────────────────────────────── */
+function renderRecentCompleted() {
+  const completed = MOCK.getCompletedSet();
+  if (completed.size === 0) {
+    document.getElementById('recent-section').innerHTML = '';
+    return;
+  }
+  const recentLessons = MOCK.ALL_LESSONS
+    .filter(l => completed.has(l.id))
+    .slice(-5)
+    .reverse();
+
+  const items = recentLessons.map(l => {
+    const unit = MOCK.UNITS.find(u => u.id === l.unitId);
+    return `
+      <div class="history-item">
+        <div class="hi-dot adopted" style="background:${unit.color}20">
+          <span class="ms ms-16 ms-fill" style="color:${unit.color}">check_circle</span>
+        </div>
+        <div class="hi-info">
+          <div class="hi-title">${l.title}</div>
+          <div class="hi-meta">
+            <span>${l.globalSeq}차시</span>
+            <span>${unit.shortTitle}</span>
+            ${l.tags.slice(0,2).map(t => `<span class="hi-tag">${t}</span>`).join('')}
+          </div>
+        </div>
+        <button class="qr-share-btn" onclick="jumpToLesson(${l.globalSeq})" style="white-space:nowrap">
+          <span class="ms ms-14" style="vertical-align:middle">redo</span> 복습
+        </button>
+      </div>
+    `;
+  }).join('');
+
+  document.getElementById('recent-section').innerHTML = `
+    <div class="recent-card">
+      <div class="card-title"><span class="ms ms-16">history</span> 최근 완료한 차시</div>
+      ${items}
+    </div>
+  `;
+}
+
+/* ──────────────────────────────────────────
+   Curriculum Panel (Right)
+────────────────────────────────────────── */
+function renderCurriculumPanel() {
+  const completed = MOCK.getCompletedSet();
+  const cur       = MOCK.getCurrentLesson();
+
+  const html = MOCK.UNITS.map(unit => {
+    const unitDone = unit.lessons.filter(l => completed.has(l.id)).length;
+    const isActiveUnit = unit.id === cur.unitId;
+
+    const lessons = unit.lessons.map(l => {
+      const isDone    = completed.has(l.id);
+      const isActive  = l.id === cur.id;
+      const icon      = isDone
+        ? `<span class="ms ms-16 ms-fill" style="color:${unit.color}">check_circle</span>`
+        : isActive
+          ? `<span class="ms ms-16" style="color:${unit.color}">play_arrow</span>`
+          : `<span class="ms ms-14" style="color:var(--muted)">${lessonTypeIcon(l.type)}</span>`;
+      return `
+        <div class="curr-lesson-item ${isDone ? 'done' : ''} ${isActive ? 'active' : ''}"
+             onclick="jumpToLesson(${l.globalSeq})">
+          ${icon}
+          <span>${l.seq}. ${l.title.length > 20 ? l.title.slice(0,20)+'…' : l.title}</span>
+        </div>
+      `;
+    }).join('');
+
+    return `
+      <div class="curr-unit ${isActiveUnit ? 'open' : ''}" id="unit-${unit.id}">
+        <div class="curr-unit-header" onclick="toggleUnit('${unit.id}')">
+          <div class="curr-unit-dot" style="background:${unit.color}"></div>
+          <div class="curr-unit-title">${unit.title}</div>
+          <div class="curr-unit-badge">${unitDone}/${unit.totalLessons}</div>
+          <span class="ms ms-18 curr-unit-chevron">chevron_right</span>
+        </div>
+        <div class="curr-lessons">${lessons}</div>
+      </div>
+    `;
+  }).join('');
+
+  document.getElementById('curriculum-card').innerHTML = `
+    <div class="card-title"><span class="ms ms-16">list</span> 전체 차시 목록</div>
+    ${html}
+  `;
+}
+
+function toggleUnit(unitId) {
+  const el = document.getElementById(`unit-${unitId}`);
+  if (el) el.classList.toggle('open');
+}
+
+/* ──────────────────────────────────────────
+   Navigation
+────────────────────────────────────────── */
+function jumpToLesson(globalSeq) {
+  MOCK.goToLesson(globalSeq);
+  renderDashboard();
+}
+
+function completeLesson(lessonId) {
+  MOCK.trackQuizAccept(lessonId);
+  MOCK.markComplete(lessonId);
+
+  const overlay = document.getElementById('adopt-overlay');
+  overlay.classList.add('open');
+  document.getElementById('adopt-next-btn').onclick = () => {
+    overlay.classList.remove('open');
+    renderDashboard();
+  };
+}
+
+/* ──────────────────────────────────────────
+   Package Modal
+────────────────────────────────────────── */
+function openModal(lesson, pkg, unit) {
+  const tb = pkg.thinkbell;
+  const savedQuiz = MOCK.getQuizUrls()[lesson.id];
+
+  /* ── 기존 자료 목록 ── */
+  const materials = pkg.materials.map(m => `
+    <a class="material-item" href="${m.url}" target="_blank" rel="noopener">
+      <div class="mat-icon"><span class="ms ms-24">${materialIcon(m.type)}</span></div>
+      <div class="mat-info">
+        <div class="mat-title">${m.title}</div>
+        <div class="mat-sub">${m.sub}</div>
+      </div>
+      <span class="ms ms-18 mat-arrow" style="color:var(--muted)">chevron_right</span>
+    </a>
+  `).join('');
+
+  /* ── 띵커벨 퀴즈 버튼 상태 ── */
+  const rejCount = tb.quiz ? (MOCK.getPreferences()[lesson.id]?.rejected || 0) : 0;
+  let quizSection = '';
+  if (tb.quiz) {
+    const quizConfigJson = JSON.stringify(tb.quiz).replace(/"/g, '&quot;');
+    if (savedQuiz) {
+      /* 이미 생성된 퀴즈 — 바로 링크 + 재생성 버튼 */
+      quizSection = `
+        <div id="quiz-section-wrap">
+          <a class="thinkbell-btn" href="${savedQuiz.quizUrl}" target="_blank" rel="noopener"
+             style="background:var(--green-lt);border-color:var(--green-b)">
+            <span class="thinkbell-btn-icon ms ms-20 ms-fill" style="color:var(--green)">check_circle</span>
+            <span class="thinkbell-btn-title" style="color:#1a6330">${tb.quiz.title}</span>
+            <span class="thinkbell-btn-badge" style="background:#ebfbee;color:var(--green);border-color:var(--green-b)">퀴즈 열기</span>
+            <span class="thinkbell-btn-arrow ms ms-18" style="color:var(--green)">open_in_new</span>
+          </a>
+          <div style="display:flex;gap:8px;margin-top:0">
+            <a class="thinkbell-btn" href="${savedQuiz.playUrl}" target="_blank" rel="noopener"
+               style="flex:1;margin-top:0">
+              <span class="thinkbell-btn-icon ms ms-20">play_circle</span>
+              <span class="thinkbell-btn-title">학생 참여 링크</span>
+              <span class="thinkbell-btn-badge">플레이</span>
+              <span class="thinkbell-btn-arrow ms ms-18">open_in_new</span>
+            </a>
+            <button class="thinkbell-btn" style="flex:0 0 auto;margin-top:0;border-color:#dee2e6;color:#868e96;padding:0 14px;font-size:12px"
+              onclick="regenerateQuiz('${lesson.id}', JSON.parse(this.dataset.cfg))"
+              data-cfg="${quizConfigJson}" title="마음에 들지 않으면 새 퀴즈로 교체해요${rejCount ? ' (재생성 '+rejCount+'회)' : ''}">
+              <span class="ms ms-16" style="vertical-align:middle;margin-right:3px">refresh</span>재생성${rejCount ? ' <span style="font-size:10px;opacity:.6">('+rejCount+')</span>' : ''}
+            </button>
+          </div>
+        </div>
+      `;
+    } else {
+      /* 캐시 없음 — 준비 중 표시 */
+      const quizConfigJson = JSON.stringify(tb.quiz).replace(/"/g, '&quot;');
+      quizSection = `
+        <div id="quiz-section-wrap">
+          <button class="thinkbell-btn" style="border-color:#dee2e6;background:var(--ice);width:100%;cursor:default">
+            <span class="thinkbell-btn-icon ms ms-20" style="color:var(--muted)">quiz</span>
+            <span class="thinkbell-btn-title" style="color:var(--muted)">퀴즈 미준비 —</span>
+            <button style="margin-left:auto;padding:4px 10px;border-radius:6px;border:1px solid #ced4da;background:#fff;font-size:11px;cursor:pointer;color:var(--text)"
+              onclick="event.stopPropagation();startQuizGenFromModal('${lesson.id}', JSON.parse(this.dataset.cfg))"
+              data-cfg="${quizConfigJson}">
+              <span class="ms ms-14" style="vertical-align:middle;margin-right:2px">add_circle</span>지금 만들기
+            </button>
+          </button>
+        </div>
+      `;
+    }
+  }
+
+  document.getElementById('modal-content').innerHTML = `
+    <div class="modal-header">
+      <div class="modal-header-info">
+        <div class="modal-unit" style="color:${unit.color}">${lesson.globalSeq}차시 · ${unit.shortTitle}</div>
+        <div class="modal-title">${lesson.title}</div>
+        <div class="modal-seq">${pkg.seq} · 교과서 ${lesson.pages}쪽</div>
+      </div>
+      <button class="modal-close" id="btn-modal-close"><span class="ms ms-20">close</span></button>
+    </div>
+
+    <div style="display:flex;gap:8px;margin-bottom:18px;flex-wrap:wrap">
+      <span class="lesson-type-badge ${lessonTypeCls(lesson.type)}">${lessonTypeLabel(lesson.type)}</span>
+      ${lesson.tags.map(t => `<span class="hi-tag">${t}</span>`).join('')}
+    </div>
+
+    <div class="section-label"><span class="ms ms-14">menu_book</span> 수업 자료</div>
+    <div class="materials-list">${materials}</div>
+
+    <div class="thinkbell-section">
+      <div class="thinkbell-label">
+        <span class="thinkbell-logo">띵커벨</span>
+        참여형 활동 자료
+      </div>
+      <div class="thinkbell-btns">
+        <a class="thinkbell-btn" href="${tb.board.url}" target="_blank" rel="noopener">
+          <span class="thinkbell-btn-icon ms ms-20">dashboard</span>
+          <span class="thinkbell-btn-title">${tb.board.title}</span>
+          <span class="thinkbell-btn-badge">보드형</span>
+          <span class="thinkbell-btn-arrow ms ms-18">open_in_new</span>
+        </a>
+        ${quizSection}
+      </div>
+    </div>
+
+    <div class="modal-cta">
+      <button class="btn-adopt" id="btn-adopt" style="background:${unit.color};box-shadow:0 2px 8px ${unit.color}40">
+        <span class="ms ms-18 ms-fill" style="vertical-align:middle;margin-right:4px">check_circle</span> 차시 완료
+      </button>
+      <button class="btn-skip" id="btn-skip">
+        <span class="ms ms-18" style="vertical-align:middle;margin-right:4px">skip_next</span> 건너뛰기
+      </button>
+    </div>
+  `;
+
+  document.getElementById('btn-modal-close').addEventListener('click', closeModal);
+  document.getElementById('btn-adopt').addEventListener('click', () => { closeModal(); completeLesson(lesson.id); });
+  document.getElementById('btn-skip').addEventListener('click', () => {
+    closeModal();
+    const next = MOCK.goToLesson(lesson.globalSeq + 1);
+    if (next) renderDashboard();
+  });
+
+  document.getElementById('pkg-modal').classList.add('open');
+}
+
+function closeModal() {
+  document.getElementById('pkg-modal').classList.remove('open');
+}
+
+/* ──────────────────────────────────────────
+   Auto Quiz Generation (per-lesson cache)
+   silent=true → DOM 업데이트 없이 백그라운드 생성만
+────────────────────────────────────────── */
+function setQuizWrapLoading(wrap, label = '퀴즈 생성 중…') {
+  wrap.innerHTML = `
+    <button class="thinkbell-btn" style="border-color:#ffe066;background:#fffbe6;width:100%" disabled>
+      <span class="thinkbell-btn-icon ms ms-20 rotating" style="color:var(--amber)">progress_activity</span>
+      <span class="thinkbell-btn-title" style="color:var(--amber)">${label}</span>
+      <span class="thinkbell-btn-badge" style="background:#fff3bf;color:var(--amber);border-color:#ffe066">생성중</span>
+    </button>`;
+}
+
+function setQuizWrapDone(wrap, quizUrl, playUrl, quizConfig, lessonId) {
+  const rejCount = MOCK.getPreferences()[lessonId]?.rejected || 0;
+  const cfg = JSON.stringify(quizConfig).replace(/"/g, '&quot;');
+  wrap.innerHTML = `
+    <a class="thinkbell-btn" href="${quizUrl}" target="_blank" rel="noopener"
+       style="background:var(--green-lt);border-color:var(--green-b)">
+      <span class="thinkbell-btn-icon ms ms-20 ms-fill" style="color:var(--green)">check_circle</span>
+      <span class="thinkbell-btn-title" style="color:#1a6330">${quizConfig.title}</span>
+      <span class="thinkbell-btn-badge" style="background:#ebfbee;color:var(--green);border-color:var(--green-b)">퀴즈 열기</span>
+      <span class="thinkbell-btn-arrow ms ms-18" style="color:var(--green)">open_in_new</span>
+    </a>
+    <div style="display:flex;gap:8px;margin-top:0">
+      <a class="thinkbell-btn" href="${playUrl}" target="_blank" rel="noopener" style="flex:1;margin-top:0">
+        <span class="thinkbell-btn-icon ms ms-20">play_circle</span>
+        <span class="thinkbell-btn-title">학생 참여 링크</span>
+        <span class="thinkbell-btn-badge">플레이</span>
+        <span class="thinkbell-btn-arrow ms ms-18">open_in_new</span>
+      </a>
+      <button class="thinkbell-btn" style="flex:0 0 auto;margin-top:0;border-color:#dee2e6;color:#868e96;padding:0 14px;font-size:12px"
+        onclick="regenerateQuiz('${lessonId}',JSON.parse(this.dataset.cfg))" data-cfg="${cfg}"
+        title="마음에 들지 않으면 새 퀴즈로 교체해요${rejCount ? ' (재생성 '+rejCount+'회)' : ''}">
+        <span class="ms ms-16" style="vertical-align:middle;margin-right:3px">refresh</span>재생성
+      </button>
+    </div>`;
+}
+
+async function autoGenerateQuiz(lessonId, quizConfig, silent = false) {
+  const wrap = silent ? null : document.getElementById('quiz-section-wrap');
+  if (wrap) setQuizWrapLoading(wrap);
+
+  try {
+    const res = await fetch('/api/tkbell/generate-quiz', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ topic: quizConfig.quizTopic, count: 10 }),
+    });
+    const data = await res.json();
+    if (!data.success || !data.quizUrl) throw new Error(data.error || '퀴즈 생성 실패');
+
+    MOCK.saveQuizUrl(lessonId, data.quizUrl, data.playUrl, data.quizIdx);
+    if (silent) { console.log('[pre-gen 완료]', lessonId, data.quizIdx); return; }
+
+    const w = document.getElementById('quiz-section-wrap');
+    if (w) setQuizWrapDone(w, data.quizUrl, data.playUrl, quizConfig, lessonId);
+  } catch (e) {
+    if (silent) { console.warn('[pre-gen 실패]', lessonId, e.message); return; }
+    const w = document.getElementById('quiz-section-wrap');
+    if (!w) return;
+    const cfg = JSON.stringify(quizConfig).replace(/"/g, '&quot;');
+    w.innerHTML = `
+      <button class="thinkbell-btn" style="border-color:#ffa8a8;background:#fff5f5;width:100%"
+        onclick="regenerateQuiz('${lessonId}',JSON.parse(this.dataset.cfg))" data-cfg="${cfg}">
+        <span class="thinkbell-btn-icon ms ms-20" style="color:#e03131">error</span>
+        <span class="thinkbell-btn-title" style="color:#c92a2a">생성 실패 — 클릭하여 다시 시도</span>
+        <span class="thinkbell-btn-arrow ms ms-18" style="color:#e03131">refresh</span>
+      </button>`;
+  }
+}
+
+function startQuizGenFromModal(lessonId, quizConfig) {
+  const wrap = document.getElementById('quiz-section-wrap');
+  if (wrap) setQuizWrapLoading(wrap);
+  autoGenerateQuiz(lessonId, quizConfig, false);
+}
+
+function regenerateQuiz(lessonId, quizConfig) {
+  MOCK.trackQuizReject(lessonId);
+  const wrap = document.getElementById('quiz-section-wrap');
+  if (wrap) setQuizWrapLoading(wrap, '새 퀴즈 생성 중…');
+  autoGenerateQuiz(lessonId, quizConfig, false);
+}
+
+/* ──────────────────────────────────────────
+   AI Quiz Generator
+────────────────────────────────────────── */
+const QUIZ_GEN_API = '/api/tkbell/generate-quiz';
+const generatedQuizzes = [];
+
+function renderQuizResults() {
+  const container = document.getElementById('quiz-gen-results');
+  if (!container) return;
+  container.innerHTML = generatedQuizzes.map((q, i) => `
+    <div class="quiz-result-item">
+      <div>
+        <div class="qr-topic"><span class="ms ms-14" style="vertical-align:middle;margin-right:3px">quiz</span>${q.topic}</div>
+        <div class="qr-count">${q.count}문항 · quizIdx ${q.quizIdx}</div>
+      </div>
+      <button class="qr-share-btn" onclick="shareQuiz(${i})"><span class="ms ms-14" style="vertical-align:middle;margin-right:2px">link</span>링크 복사</button>
+      <button class="qr-share-btn" onclick="openQuiz(${i})" style="background:var(--blue);color:#fff;border-color:var(--blue)"><span class="ms ms-14" style="vertical-align:middle;margin-right:2px">open_in_new</span>열기</button>
+    </div>
+  `).join('');
+}
+
+function shareQuiz(i) {
+  const q = generatedQuizzes[i];
+  if (!q) return;
+  navigator.clipboard.writeText(q.playUrl).then(() => {
+    const btns = document.querySelectorAll('.qr-share-btn');
+    const btn = btns[i * 2];
+    if (btn) { btn.innerHTML = '복사됨'; setTimeout(() => btn.innerHTML = '<span class="ms ms-14" style="vertical-align:middle;margin-right:2px">link</span>링크 복사', 2000); }
+  }).catch(() => prompt('퀴즈 링크:', q.playUrl));
+}
+
+function openQuiz(i) {
+  const q = generatedQuizzes[i];
+  if (q) window.open(q.quizUrl, '_blank');
+}
+
+function initQuizGenerator() {
+  const input  = document.getElementById('quiz-gen-input');
+  const btn    = document.getElementById('quiz-gen-btn');
+  const status = document.getElementById('quiz-gen-status');
+  if (!btn) return;
+
+  /* Pre-fill with current lesson topic */
+  const cur = MOCK.getCurrentLesson();
+  if (cur && input) input.placeholder = `예: ${cur.title.replace('볼까요','').trim()}`;
+
+  async function doGenerate() {
+    const topic = input.value.trim();
+    if (!topic) { input.focus(); return; }
+    btn.disabled = true;
+    input.disabled = true;
+    status.textContent = 'Claude가 10개 문항 생성 중…';
+    status.style.color = 'var(--muted)';
+    try {
+      const res = await fetch(QUIZ_GEN_API, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ topic, count: 10 }),
+      });
+      const data = await res.json();
+      if (!data.success) throw new Error(data.error || '생성 실패');
+      generatedQuizzes.unshift({
+        topic: data.topic, quizIdx: data.quizIdx,
+        quizUrl: data.quizUrl, playUrl: data.playUrl,
+        count: data.questionCount || data.questions?.length || 10,
+      });
+      renderQuizResults();
+      status.textContent = `"${data.topic}" 퀴즈 생성 완료! (quizIdx: ${data.quizIdx})`;
+      status.style.color = 'var(--green)';
+      input.value = '';
+    } catch(e) {
+      status.textContent = `오류: ${e.message}`;
+      status.style.color = 'var(--red)';
+    } finally {
+      btn.disabled = false;
+      input.disabled = false;
+    }
+  }
+  btn.addEventListener('click', doGenerate);
+  input.addEventListener('keydown', e => { if (e.key === 'Enter') doGenerate(); });
+}
+
+/* ──────────────────────────────────────────
+   Boot — 서버 퀴즈 캐시 로드 후 시작
+────────────────────────────────────────── */
+window.SERVER_QUIZ_CACHE = {};
+fetch('data/quiz_cache.json?t=' + Date.now())
+  .then(r => r.ok ? r.json() : {})
+  .then(data => { window.SERVER_QUIZ_CACHE = data || {}; })
+  .catch(() => {})
+  .finally(() => { boot(); initQuizGenerator(); });
+</script>
+</body>
+</html>
