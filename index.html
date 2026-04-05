@@ -1758,10 +1758,9 @@ body.dragging #trash-zone {
     </div>
     <div class="topnav-divider"></div>
     <div class="topnav-teacher" id="topnav-teacher-info">
-      <strong>5학년 1학기</strong> · 수학
+      <strong>5학년 1학기</strong>
     </div>
     <div class="topnav-spacer"></div>
-    <div class="topnav-progress-pill" id="topnav-progress-pill"></div>
   </nav>
 
   <div class="dash-body">
@@ -1954,9 +1953,6 @@ function renderCalendar(weekStr) {
         const doneStyle   = isCompleted ? ' tt-math-done' : '';
         const curStyle    = isCurrent   ? ' tt-math-current' : '';
         const quizDot     = hasQuiz ? `<span style="position:absolute;top:5px;right:6px;width:6px;height:6px;border-radius:50%;background:#2f9e44"></span>` : '';
-        const statusIcon  = isCompleted
-          ? `<span class="ms ms-11 ms-fill" style="color:#2f9e44">check_circle</span>`
-          : isCurrent ? `<span class="ms ms-11" style="opacity:.7">play_arrow</span>` : '';
         return `
           <td class="tt-math${doneStyle}${curStyle}${todayCls}"
               style="background:${color}18;color:${color};position:relative;cursor:grab"
@@ -1967,7 +1963,7 @@ function renderCalendar(weekStr) {
               title="${lesson.title} (${lesson.globalSeq}차시)">
             ${quizDot}
             <div class="tt-math-inner" style="pointer-events:none">
-              <span class="tt-math-subj">${statusIcon}수학 <span class="tt-math-badge">${typeLabel}</span></span>
+              <span class="tt-math-subj">수학 <span class="tt-math-badge">${typeLabel}</span></span>
               ${unitName ? `<span class="tt-cell-unit">${unitName}</span>` : ''}
               <span class="tt-math-title">${lesson.title}</span>
             </div>
@@ -2033,7 +2029,6 @@ function renderCalendar(weekStr) {
         <button class="cal-week-nav" id="cal-prev-week" title="이전 주">&#8249;</button>
         <span class="cal-week-range" id="cal-week-label">${weekRangeLabel(weekStr)}</span>
         <button class="cal-week-nav" id="cal-next-week" title="다음 주">&#8250;</button>
-        <span class="tt-week-label">수학 ${mathCount}차시 예정</span>
       </div>
       <div style="overflow-x:auto">
         <table class="tt-table" id="cal-table">
@@ -2067,8 +2062,6 @@ function calendarOpenPeriod(weekStr, slotKey) {
   const { lesson, subject } = found;
 
   if (subject === '수학') {
-    MOCK.goToLesson(lesson.globalSeq);
-    renderDashboard();
     const pkg  = MOCK.getPackage(lesson);
     const unit = MOCK.UNITS.find(u => u.id === lesson.unitId);
     openModal(lesson, pkg, unit);
@@ -2295,13 +2288,7 @@ function renderProgressHeader() {
   `;
 }
 
-function renderTopnavPill() {
-  const total = MOCK.ALL_LESSONS.length;
-  const done  = MOCK.getCompletedSet().size;
-  const cur   = MOCK.getCurrentLesson();
-  const el    = document.getElementById('topnav-progress-pill');
-  if (el) el.textContent = `수학 ${done}/${total}차시 · 현재 ${cur.globalSeq}차시`;
-}
+function renderTopnavPill() {}
 
 /* ──────────────────────────────────────────
    Hero — Current Lesson Package
@@ -2477,7 +2464,7 @@ function renderAccordion() {
 
   const mathUnitsHtml = MOCK.UNITS.map(unit => {
     const unitDone = unit.lessons.filter(l => completed.has(l.id)).length;
-    const isOpen   = unit.id === cur?.unitId;
+    const isOpen   = false;
     const lessonsHtml = unit.lessons.map(l => {
       const isDone   = completed.has(l.id);
       const isActive = l.id === cur?.id;
@@ -2562,7 +2549,7 @@ function renderAccordion() {
       </div>
 
       <!-- 수학 -->
-      <div class="accordion-item open" id="acc-subj-수학">
+      <div class="accordion-item" id="acc-subj-수학">
         <div class="accordion-item-header" onclick="toggleAccordionSubj('수학')">
           <div class="accordion-subj-icon" style="background:var(--blue-lt)">
             <span class="ms ms-18" style="color:var(--blue)">calculate</span>
@@ -2605,7 +2592,12 @@ function jumpToLesson(globalSeq) {
 
 function completeLesson(lessonId) {
   MOCK.trackQuizAccept(lessonId);
-  MOCK.markComplete(lessonId);
+
+  // 수학 차시인 경우에만 수학 진도 markComplete
+  const isMath = !!MOCK.ALL_LESSONS.find(l => l.id === lessonId);
+  if (isMath) {
+    MOCK.markComplete(lessonId);
+  }
 
   const overlay = document.getElementById('adopt-overlay');
   overlay.classList.add('open');
@@ -2723,32 +2715,21 @@ function openModal(lesson, pkg, unit) {
     </div>
 
     <div class="modal-cta">
-      ${pkg.subject && pkg.subject !== '수학' ? `
-        <button class="btn-skip" id="btn-adopt" style="background:${unit.color || '#495057'};color:#fff;border-color:transparent;box-shadow:0 2px 8px rgba(0,0,0,.15)">
-          <span class="ms ms-18" style="vertical-align:middle;margin-right:4px">close</span> 닫기
-        </button>
-      ` : `
-        <button class="btn-adopt" id="btn-adopt" style="background:${unit.color};box-shadow:0 2px 8px ${unit.color}40">
-          <span class="ms ms-18 ms-fill" style="vertical-align:middle;margin-right:4px">check_circle</span> 차시 완료
-        </button>
-        <button class="btn-skip" id="btn-skip">
-          <span class="ms ms-18" style="vertical-align:middle;margin-right:4px">skip_next</span> 건너뛰기
-        </button>
-      `}
+      <button class="btn-adopt" id="btn-complete" style="background:${unit.color || 'var(--blue)'};box-shadow:0 2px 8px ${unit.color ? unit.color + '40' : 'rgba(34,139,230,.3)'}">
+        <span class="ms ms-18 ms-fill" style="vertical-align:middle;margin-right:4px">check_circle</span> 차시 완료
+      </button>
+      <button class="btn-skip" id="btn-close-modal">
+        <span class="ms ms-18" style="vertical-align:middle;margin-right:4px">close</span> 닫기
+      </button>
     </div>
   `;
 
   document.getElementById('btn-modal-close').addEventListener('click', closeModal);
-  if (pkg.subject && pkg.subject !== '수학') {
-    document.getElementById('btn-adopt').addEventListener('click', closeModal);
-  } else {
-    document.getElementById('btn-adopt').addEventListener('click', () => { closeModal(); completeLesson(lesson.id); });
-    document.getElementById('btn-skip').addEventListener('click', () => {
-      closeModal();
-      const next = MOCK.goToLesson(lesson.globalSeq + 1);
-      if (next) renderDashboard();
-    });
-  }
+  document.getElementById('btn-close-modal').addEventListener('click', closeModal);
+  document.getElementById('btn-complete').addEventListener('click', () => {
+    closeModal();
+    completeLesson(lesson.id);
+  });
 
   document.getElementById('pkg-modal').classList.add('open');
 }
