@@ -225,8 +225,8 @@ body {
 /* ── Dashboard Body ── */
 .dash-body {
   flex: 1;
-  padding: 24px 20px;
-  max-width: 1100px;
+  padding: 24px 24px 48px;
+  max-width: 1200px;
   margin: 0 auto;
   width: 100%;
 }
@@ -312,6 +312,180 @@ body {
   font-size: 0.74rem;
   color: var(--muted);
   margin-top: 5px;
+}
+
+/* ── 학습 결과 아코디언 ─────────────────────────────────────── */
+.accordion-card {
+  background: #fff;
+  border: 1px solid var(--card-b);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+  margin-bottom: 20px;
+}
+.accordion-header-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 16px 20px;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text);
+  border-bottom: 1px solid var(--border);
+}
+.accordion-item {
+  border-bottom: 1px solid var(--border);
+}
+.accordion-item:last-child { border-bottom: none; }
+.accordion-item-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 13px 20px;
+  cursor: pointer;
+  user-select: none;
+  transition: background .1s;
+}
+.accordion-item-header:hover { background: var(--ice); }
+.accordion-subj-icon {
+  width: 30px; height: 30px;
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.accordion-subj-name {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text);
+  min-width: 40px;
+}
+.accordion-subj-bar-wrap {
+  flex: 1;
+  height: 6px;
+  background: var(--ice);
+  border-radius: 999px;
+  overflow: hidden;
+}
+.accordion-subj-bar-fill {
+  height: 100%;
+  border-radius: 999px;
+  transition: width .6s ease;
+}
+.accordion-subj-pct {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--muted);
+  min-width: 32px;
+  text-align: right;
+}
+.accordion-subj-count {
+  font-size: 11px;
+  color: var(--muted);
+  min-width: 52px;
+  text-align: right;
+}
+.accordion-chevron {
+  color: var(--muted);
+  transition: transform .2s;
+}
+.accordion-item.open .accordion-chevron { transform: rotate(90deg); }
+.accordion-body {
+  display: none;
+  padding: 0 20px 14px;
+}
+.accordion-item.open .accordion-body { display: block; }
+
+/* 수학 단원 목록 (기존 curr-* 재사용) */
+.accordion-unit {
+  margin-top: 8px;
+}
+.accordion-unit-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 0;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--dim);
+  border-top: 1px solid var(--border);
+}
+.accordion-unit-header:first-child { border-top: none; }
+.accordion-unit-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.accordion-unit-badge {
+  margin-left: auto;
+  font-size: 10px;
+  background: var(--ice);
+  border-radius: 20px;
+  padding: 1px 7px;
+  color: var(--muted);
+}
+.accordion-unit-lessons {
+  display: none;
+  padding-left: 16px;
+}
+.accordion-unit.open > .accordion-unit-lessons { display: block; }
+
+/* 타 교과 주간 차시 목록 */
+.accordion-lesson-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 0;
+  font-size: 11px;
+  color: var(--dim);
+  border-top: 1px solid var(--border);
+  cursor: pointer;
+}
+.accordion-lesson-row:first-child { border-top: none; }
+.accordion-lesson-row:hover { color: var(--text); }
+
+/* ── 전체 교과 진행률 그리드 ────────────────────────────────── */
+.subj-progress-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  gap: 10px;
+  margin-top: 16px;
+}
+.subj-progress-item {
+  background: var(--ice);
+  border-radius: 10px;
+  padding: 10px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.spi-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 700;
+}
+.spi-pct {
+  margin-left: auto;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--muted);
+}
+.spi-bar {
+  height: 5px;
+  background: rgba(0,0,0,.08);
+  border-radius: 999px;
+  overflow: hidden;
+}
+.spi-bar-fill {
+  height: 100%;
+  border-radius: 999px;
+  transition: width .6s ease;
+}
+.spi-detail {
+  font-size: 10px;
+  color: var(--muted);
 }
 
 /* ── Dashboard Grid ── */
@@ -919,22 +1093,23 @@ body {
 }
 
 .quiz-gen-btn {
-  background: var(--blue);
+  background: #6741d9;
   color: #fff;
   border: none;
   border-radius: var(--radius-sm);
-  padding: 9px 16px;
+  padding: 9px 18px;
   font-size: 0.85rem;
   font-weight: 700;
   font-family: inherit;
   cursor: pointer;
   white-space: nowrap;
   transition: background 0.15s, box-shadow 0.15s;
-  box-shadow: 0 1px 4px rgba(34,139,230,0.25);
+  box-shadow: 0 1px 4px rgba(103,65,217,0.3);
+  display: flex; align-items: center; gap: 4px;
 }
 
-.quiz-gen-btn:hover  { background: var(--blue-dk); box-shadow: 0 2px 8px rgba(34,139,230,0.35); }
-.quiz-gen-btn:active { background: var(--blue-dk); }
+.quiz-gen-btn:hover  { background: #5b35c5; box-shadow: 0 2px 8px rgba(103,65,217,0.4); }
+.quiz-gen-btn:active { background: #4e2eb5; }
 .quiz-gen-btn:disabled { opacity: 0.5; cursor: not-allowed; box-shadow: none; }
 
 .quiz-gen-status {
@@ -1194,6 +1369,9 @@ body {
   font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 20;
 }
 .ms-fill { font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 20; }
+.ms-11 { font-size: 11px; }
+.ms-12 { font-size: 12px; }
+.ms-13 { font-size: 13px; }
 .ms-14 { font-size: 14px; }
 .ms-16 { font-size: 16px; }
 .ms-18 { font-size: 18px; }
@@ -1207,10 +1385,11 @@ body {
 
 /* ── Timetable ─────────────────────────────────────────────── */
 .tt-card {
-  background: var(--card);
+  background: #fff;
+  border: 1px solid var(--card-b);
   border-radius: var(--radius);
   box-shadow: var(--shadow);
-  padding: 18px 20px 20px;
+  padding: 20px 24px 24px;
   margin-bottom: 20px;
 }
 .tt-card-header {
@@ -1235,13 +1414,13 @@ body {
 .tt-table {
   width: 100%;
   border-collapse: separate;
-  border-spacing: 3px;
+  border-spacing: 4px;
 }
 .tt-table th {
   font-size: 12px;
   font-weight: 700;
   text-align: center;
-  padding: 6px 4px;
+  padding: 8px 4px;
   color: var(--muted);
   width: calc(100% / 6);
 }
@@ -1251,24 +1430,26 @@ body {
   border-radius: 6px;
 }
 .tt-table td {
-  text-align: center;
-  padding: 5px 3px;
+  text-align: left;
+  padding: 6px 4px;
   font-size: 11px;
-  border-radius: 6px;
+  border-radius: 8px;
   color: #868e96;
   background: var(--ice);
-  height: 42px;
-  vertical-align: middle;
-  white-space: nowrap;
+  height: 96px;
+  vertical-align: top;
+  white-space: normal;
   overflow: hidden;
-  text-overflow: ellipsis;
+  word-break: keep-all;
 }
 .tt-table td.tt-period {
   font-size: 11px;
   font-weight: 700;
   color: var(--muted);
   background: transparent;
-  width: 28px;
+  width: 24px;
+  text-align: center;
+  vertical-align: middle;
 }
 .tt-table td.tt-empty {
   background: transparent;
@@ -1281,28 +1462,37 @@ body {
   cursor: pointer;
   font-size: 11px;
   font-weight: 600;
-  line-height: 1.3;
-  padding: 4px 5px !important;
-  transition: filter .15s, transform .1s;
+  line-height: 1.35;
+  padding: 7px 7px !important;
+  transition: filter .15s, box-shadow .15s;
   position: relative;
+  height: 96px !important;
+  vertical-align: top !important;
 }
-.tt-math:hover { filter: brightness(.93); transform: scale(1.04); }
-.tt-math:active { transform: scale(.97); }
+.tt-math:hover { filter: brightness(.93); box-shadow: inset 0 0 0 2px rgba(0,0,0,.12); }
+.tt-math:active { filter: brightness(.87); }
 .tt-math-title {
-  display: block;
-  font-size: 10px;
-  font-weight: 500;
-  opacity: .85;
-  margin-top: 2px;
-  white-space: normal;
-  line-height: 1.2;
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1.3;
   overflow: hidden;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
+  margin-top: 1px;
 }
-.tt-math-done { opacity: .65; }
-.tt-math-current { box-shadow: 0 0 0 2px #fff, 0 0 0 4px currentColor; }
+.tt-cell-unit {
+  font-size: 10px;
+  font-weight: 400;
+  opacity: .7;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  display: block;
+  margin-top: 1px;
+}
+.tt-math-done { opacity: .55; }
+.tt-math-current { box-shadow: inset 0 0 0 2px rgba(255,255,255,.7), 0 0 0 2.5px currentColor; }
 
 /* Logo icon */
 .logo-icon {
@@ -1322,6 +1512,219 @@ body {
   display: flex; align-items: center; justify-content: center;
   color: var(--blue-dk);
   flex-shrink: 0;
+}
+
+/* ── 타 교과 셀 ────────────────────────────────────────────── */
+.tt-subj {
+  cursor: pointer;
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1.35;
+  padding: 7px 7px !important;
+  transition: filter .15s, box-shadow .15s;
+  position: relative;
+  height: 96px !important;
+  vertical-align: top !important;
+}
+.tt-subj:hover { filter: brightness(.9); box-shadow: inset 0 0 0 2px rgba(0,0,0,.1); }
+.tt-subj:active { filter: brightness(.85); }
+.tt-subj-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1px;
+  pointer-events: none;
+  height: 100%;
+}
+.tt-subj-name {
+  font-size: 10px;
+  font-weight: 700;
+  display: block;
+  line-height: 1.3;
+}
+.tt-subj-title {
+  font-size: 11px;
+  font-weight: 600;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  line-height: 1.3;
+  margin-top: 1px;
+}
+.tt-subj.drag-over {
+  outline: 2px dashed currentColor;
+  outline-offset: -2px;
+  filter: brightness(.88);
+}
+.tt-subj.drag-source { opacity: .4; cursor: grabbing; }
+
+/* ── 캘린더 주간 헤더 ──────────────────────────────────────── */
+.cal-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 14px;
+}
+.cal-week-nav {
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  width: 28px; height: 28px;
+  cursor: pointer;
+  font-size: 16px;
+  color: var(--muted);
+  display: flex; align-items: center; justify-content: center;
+  transition: background .12s, color .12s;
+  flex-shrink: 0;
+  line-height: 1;
+}
+.cal-week-nav:hover { background: var(--ice); color: var(--text); }
+.cal-week-range {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+/* ── 수학 셀 (캘린더 뷰 확장) ──────────────────────────────── */
+.tt-math {
+  height: 96px !important;
+}
+.tt-math-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1px;
+  pointer-events: none;
+  height: 100%;
+}
+.tt-math-subj {
+  font-size: 10px;
+  font-weight: 700;
+  opacity: .75;
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  line-height: 1.3;
+}
+.tt-math-badge {
+  font-size: 9px;
+  font-weight: 600;
+  padding: 1px 5px;
+  border-radius: 20px;
+  background: rgba(255,255,255,.55);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.tt-math-drag-hint {
+  position: absolute;
+  bottom: 5px;
+  right: 5px;
+  font-size: 11px;
+  opacity: 0;
+  transition: opacity .15s;
+  color: currentColor;
+}
+.tt-math:hover .tt-math-drag-hint { opacity: .45; }
+.tt-subj:hover .tt-math-drag-hint { opacity: .45; }
+
+/* 드래그 중 강조 */
+.tt-math.drag-over {
+  outline: 2px dashed currentColor;
+  outline-offset: -2px;
+  filter: brightness(.9);
+}
+.tt-math.drag-source {
+  opacity: .45;
+  cursor: grabbing;
+}
+
+/* 취소된 슬롯 */
+.tt-math-cancelled {
+  opacity: .55;
+  cursor: default !important;
+  text-decoration: line-through;
+  filter: grayscale(.8) !important;
+}
+.tt-math-cancelled:hover {
+  filter: grayscale(.8) !important;
+  transform: none !important;
+}
+
+/* ── 쓰레기통 존 ───────────────────────────────────────────── */
+#trash-zone {
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  height: 72px;
+  background: #fff0f0;
+  border-top: 2px dashed #c92a2a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  color: #c92a2a;
+  font-size: 13px;
+  font-weight: 600;
+  z-index: 200;
+  transform: translateY(100%);
+  transition: transform .22s cubic-bezier(.22,1,.36,1);
+  pointer-events: none;
+}
+body.dragging #trash-zone {
+  transform: translateY(0);
+  pointer-events: auto;
+}
+#trash-zone.drag-over {
+  background: #ffd6d6;
+  border-color: #a61e1e;
+}
+
+/* ── Undo 바 ───────────────────────────────────────────────── */
+#undo-bar {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%) translateY(80px);
+  opacity: 0;
+  transition: transform .22s cubic-bezier(.22,1,.36,1), opacity .18s;
+  background: #212529;
+  color: #fff;
+  border-radius: 10px;
+  padding: 10px 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 13px;
+  z-index: 300;
+  box-shadow: 0 4px 20px rgba(0,0,0,.28);
+  white-space: nowrap;
+  pointer-events: none;
+}
+#undo-bar.open {
+  transform: translateX(-50%) translateY(0);
+  opacity: 1;
+  pointer-events: auto;
+}
+#undo-bar-btn {
+  background: none;
+  border: 1px solid rgba(255,255,255,.4);
+  border-radius: 6px;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 3px 10px;
+  cursor: pointer;
+  transition: background .1s;
+}
+#undo-bar-btn:hover { background: rgba(255,255,255,.15); }
+#undo-bar-dismiss {
+  background: none;
+  border: none;
+  color: rgba(255,255,255,.6);
+  font-size: 16px;
+  cursor: pointer;
+  padding: 0 2px;
+  line-height: 1;
 }
 </style>
 </head>
@@ -1362,43 +1765,29 @@ body {
   </nav>
 
   <div class="dash-body">
-    <!-- Progress -->
-    <div class="progress-header" id="progress-header"></div>
+    <!-- 2. 수업 시간표 -->
+    <div id="calendar-section"></div>
 
-    <!-- Timetable -->
-    <div id="timetable-section"></div>
-
-    <!-- Grid -->
-    <div class="dash-grid">
-      <!-- Left: Hero + Recent -->
-      <div class="left-col">
-        <div id="hero-section"></div>
-        <div id="recent-section"></div>
+    <!-- 3. 띵커벨 퀴즈 만들기 -->
+    <div class="tt-card" id="quizgen-section">
+      <div class="cal-header" style="margin-bottom:14px">
+        <span class="ms ms-20" style="color:#6741d9">quiz</span>
+        <span class="tt-card-title">띵커벨 퀴즈 만들기</span>
+        <span class="tt-week-label">주제 입력 → 10문항 자동 생성</span>
       </div>
-
-      <!-- Right: Curriculum + Quiz -->
-      <div class="right-col">
-        <div class="curriculum-card" id="curriculum-card"></div>
-
-        <!-- Quiz Generator -->
-        <div class="quiz-gen-card">
-          <div class="quiz-gen-header">
-            <div class="quiz-gen-icon"><span class="ms ms-24">smart_toy</span></div>
-            <div>
-              <div class="quiz-gen-title">AI 퀴즈 생성기</div>
-              <div class="quiz-gen-sub">차시 주제 → 10문항 자동 생성 → 띵커벨 등록</div>
-            </div>
-          </div>
-          <div class="quiz-gen-row">
-            <input class="quiz-gen-input" id="quiz-gen-input" type="text"
-              placeholder="예: 약수와 배수, 분수의 덧셈…" maxlength="80">
-            <button class="quiz-gen-btn" id="quiz-gen-btn">생성</button>
-          </div>
-          <div class="quiz-gen-status" id="quiz-gen-status"></div>
-          <div class="quiz-gen-results" id="quiz-gen-results"></div>
-        </div>
+      <div class="quiz-gen-row">
+        <input class="quiz-gen-input" id="quiz-gen-input" type="text"
+          placeholder="예: 약수와 배수, 분수의 덧셈…" maxlength="80">
+        <button class="quiz-gen-btn" id="quiz-gen-btn">
+          <span class="ms ms-16" style="vertical-align:middle;margin-right:4px">auto_awesome</span>생성하기
+        </button>
       </div>
+      <div class="quiz-gen-status" id="quiz-gen-status"></div>
+      <div class="quiz-gen-results" id="quiz-gen-results"></div>
     </div>
+
+    <!-- 4. 학습 결과 모아보기 -->
+    <div id="accordion-section"></div>
   </div>
 </div>
 
@@ -1461,16 +1850,13 @@ function boot() {
 }
 
 function renderDashboard() {
-  renderProgressHeader();
   renderTopnavPill();
-  renderTimetable();
-  renderHero();
-  renderRecentCompleted();
-  renderCurriculumPanel();
+  renderCalendar();
+  renderAccordion();
 }
 
 /* ──────────────────────────────────────────
-   Weekly Timetable
+   Weekly Calendar (캘린더 뷰)
 ────────────────────────────────────────── */
 const TIMETABLE_GRID = [
   //  월       화       수       목       금
@@ -1482,51 +1868,44 @@ const TIMETABLE_GRID = [
   ['도덕',  '수학',  '',      '사회',  '수학'],   // 6교시
 ];
 const DAYS_KO = ['월', '화', '수', '목', '금'];
-// 수학 슬롯: { day: 0=월…4=금, period: 0-indexed }  순서 = 이 주의 수학 수업 순서
 const MATH_SLOTS = [
   { day: 1, period: 5 }, // 화 6교시
   { day: 2, period: 4 }, // 수 5교시
   { day: 3, period: 1 }, // 목 2교시
   { day: 4, period: 5 }, // 금 6교시
 ];
-// 오늘 요일(1=Mon…5=Fri) → 수학 슬롯 index (-1 = 오늘 수학 없음)
 const DOW_TO_SLOT = { 2: 0, 3: 1, 4: 2, 5: 3 }; // JS getDay: 0=Sun
 
-function renderTimetable() {
-  const progress     = MOCK.getProgress();
-  const currentIdx   = progress.currentIdx;
+// 현재 뷰 주 (ISO 주 문자열)
+let currentViewWeek = MOCK.getISOWeek(new Date());
+
+// 주 범위 레이블 생성 (예: "4월 7일(월) ~ 4월 11일(금)")
+function weekRangeLabel(weekStr) {
+  const monday = MOCK.weekStrToMonday(weekStr);
+  const friday = new Date(monday);
+  friday.setUTCDate(monday.getUTCDate() + 4);
+  const fmt = d => `${d.getUTCMonth()+1}월 ${d.getUTCDate()}일`;
+  const today = MOCK.getISOWeek(new Date());
+  const label = weekStr === today ? '이번 주' : weekStr === MOCK.offsetWeek(today, -1) ? '지난 주' : weekStr === MOCK.offsetWeek(today, 1) ? '다음 주' : null;
+  return label ? `${label} (${fmt(monday)} ~ ${fmt(friday)})` : `${fmt(monday)} ~ ${fmt(friday)}`;
+}
+
+function renderCalendar(weekStr) {
+  if (!weekStr) weekStr = currentViewWeek;
+  currentViewWeek = weekStr;
+
+  const schedule    = MOCK.getWeekSchedule(weekStr);
   const completedSet = MOCK.getCompletedSet();
-  const quizUrls     = MOCK.getQuizUrls();
+  const quizUrls    = MOCK.getQuizUrls();
+  const currentLesson = MOCK.getCurrentLesson();
 
-  // 오늘의 수학 슬롯 index 결정
-  const dow         = new Date().getDay(); // 0=Sun
-  const todaySlot   = DOW_TO_SLOT[dow] ?? -1;
-  const todayDayIdx = dow === 0 ? -1 : dow - 1; // 0=월…4=금, -1=Sun
+  const today      = new Date();
+  const todayWeek  = MOCK.getISOWeek(today);
+  const isThisWeek = weekStr === todayWeek;
+  const dow        = today.getDay(); // 0=Sun
+  const todayDayIdx = (isThisWeek && dow >= 1 && dow <= 5) ? dow - 1 : -1;
 
-  // 이번 주에서 오늘 이전까지 지난 수학 슬롯 수
-  // (주말/월 = 0, 화 = 0번 지남, 수 = 1번 지남, 목 = 2번 지남, 금 = 3번 지남)
-  const passedSlots = todaySlot >= 0 ? todaySlot : 0;
-
-  // 각 슬롯에 해당하는 전체 차시 index
-  const slotLessons = MATH_SLOTS.map((slot, i) => {
-    const li = currentIdx - passedSlots + i;
-    const lesson = (li >= 0 && li < MOCK.ALL_LESSONS.length) ? MOCK.ALL_LESSONS[li] : null;
-    return {
-      ...slot,
-      lesson,
-      lessonIdx: li,
-      isPast:      i < passedSlots,
-      isCurrent:   li === currentIdx,
-      isCompleted: lesson && completedSet.has(lesson.id),
-      hasQuiz:     lesson && !!quizUrls[lesson.id],
-    };
-  });
-
-  // 헤더 레이블 (이번 주 / 다음 주)
-  const isWeekend = dow === 0 || dow === 6;
-  const weekLabel = isWeekend ? '다음 주 수학 수업' : '이번 주 수학 수업';
-
-  // 테이블 렌더
+  // 헤더 컬럼
   const theadCols = ['', ...DAYS_KO].map((d, i) => {
     if (i === 0) return `<th></th>`;
     const dayIdx = i - 1;
@@ -1534,119 +1913,394 @@ function renderTimetable() {
     return `<th class="${isToday ? 'tt-today-head' : ''}">${d}${isToday ? '<br><span style="font-size:9px;font-weight:400">오늘</span>' : ''}</th>`;
   }).join('');
 
+  // 테이블 행
   const tbodyRows = TIMETABLE_GRID.map((row, period) => {
     const cols = row.map((subj, dayIdx) => {
       const isToday = dayIdx === todayDayIdx;
-      if (!subj) return `<td class="tt-empty ${isToday ? 'tt-today-col' : ''}">-</td>`;
+      const todayCls = isToday ? ' tt-today-col' : '';
+      const slotKey = `${dayIdx}-${period}`;
+      const slot = schedule[slotKey];
 
-      if (subj === '수학') {
-        const slotIdx = MATH_SLOTS.findIndex(s => s.day === dayIdx && s.period === period);
-        const sl = slotIdx >= 0 ? slotLessons[slotIdx] : null;
-        if (!sl || !sl.lesson) {
-          return `<td class="tt-math ${isToday ? 'tt-today-col' : ''}" style="opacity:.4;cursor:default">수학</td>`;
-        }
-        const unit = MOCK.UNITS.find(u => u.id === sl.lesson.unitId);
+      // 슬롯에 저장된 차시의 실제 교과 파악 (스왑으로 다른 과목 슬롯에 올 수 있음)
+      let lesson = null, actualSubj = subj;
+      if (slot && slot.lessonId) {
+        const found = MOCK.findLesson(slot.lessonId);
+        if (found) { lesson = found.lesson; actualSubj = found.subject; }
+      }
+
+      // 취소된 슬롯
+      if (slot && slot.status === 'cancelled') {
+        return `<td class="tt-subj tt-math-cancelled${todayCls}"
+            data-slot-key="${slotKey}" data-week="${weekStr}" style="position:relative">
+          <div class="tt-subj-inner">
+            <span class="tt-subj-name">${actualSubj || subj}</span>
+            <span style="font-size:9px;background:rgba(201,42,42,.15);color:#c92a2a;padding:1px 5px;border-radius:20px">취소됨</span>
+          </div>
+        </td>`;
+      }
+
+      // 교과도 없고 차시도 없는 빈 셀
+      if (!subj && !lesson) return `<td class="tt-empty${todayCls}">-</td>`;
+
+      // 수학 차시 (수학 슬롯이거나 스왑으로 배치된 경우)
+      if (lesson && actualSubj === '수학') {
+        const unit = MOCK.UNITS.find(u => u.id === lesson.unitId);
         const color = unit ? unit.color : '#228be6';
-        const titleShort = sl.lesson.title.length > 14 ? sl.lesson.title.slice(0, 13) + '…' : sl.lesson.title;
-        const doneStyle = sl.isCompleted ? ' tt-math-done' : '';
-        const curStyle  = sl.isCurrent   ? ' tt-math-current' : '';
-        const quizDot   = sl.hasQuiz ? `<span style="position:absolute;top:3px;right:4px;width:5px;height:5px;border-radius:50%;background:#2f9e44;display:inline-block"></span>` : '';
+        const isCompleted = completedSet.has(lesson.id);
+        const isCurrent   = lesson.id === currentLesson?.id;
+        const hasQuiz     = !!quizUrls[lesson.id];
+        const typeLabel   = lessonTypeLabel(lesson.type);
+        const unitName    = lesson.unitTitle || (unit ? unit.shortTitle : '');
+        const doneStyle   = isCompleted ? ' tt-math-done' : '';
+        const curStyle    = isCurrent   ? ' tt-math-current' : '';
+        const quizDot     = hasQuiz ? `<span style="position:absolute;top:5px;right:6px;width:6px;height:6px;border-radius:50%;background:#2f9e44"></span>` : '';
+        const statusIcon  = isCompleted
+          ? `<span class="ms ms-11 ms-fill" style="color:#2f9e44">check_circle</span>`
+          : isCurrent ? `<span class="ms ms-11" style="opacity:.7">play_arrow</span>` : '';
         return `
-          <td class="tt-math${doneStyle}${curStyle} ${isToday ? 'tt-today-col' : ''}"
-              style="background:${color}18;color:${color};position:relative"
-              onclick="timetableOpenLesson(${sl.lessonIdx})"
-              title="${sl.lesson.title} (${sl.lesson.globalSeq}차시)">
+          <td class="tt-math${doneStyle}${curStyle}${todayCls}"
+              style="background:${color}18;color:${color};position:relative;cursor:grab"
+              draggable="true"
+              data-slot-key="${slotKey}"
+              data-week="${weekStr}"
+              data-lesson-id="${lesson.id}"
+              title="${lesson.title} (${lesson.globalSeq}차시)">
             ${quizDot}
-            ${sl.isCompleted ? '<span class="ms ms-12 ms-fill" style="vertical-align:middle">check_circle</span> ' : sl.isCurrent ? '<span class="ms ms-10" style="vertical-align:middle">play_arrow</span> ' : ''}수학
-            <span class="tt-math-title">${titleShort}</span>
+            <div class="tt-math-inner" style="pointer-events:none">
+              <span class="tt-math-subj">${statusIcon}수학 <span class="tt-math-badge">${typeLabel}</span></span>
+              ${unitName ? `<span class="tt-cell-unit">${unitName}</span>` : ''}
+              <span class="tt-math-title">${lesson.title}</span>
+            </div>
+            <span class="ms ms-13 tt-math-drag-hint">drag_indicator</span>
           </td>`;
       }
 
-      return `<td class="${isToday ? 'tt-today-col' : ''}">${subj}</td>`;
+      // 타 교과 차시 (해당 과목 슬롯이거나 스왑으로 배치된 경우)
+      if (lesson) {
+        const color = MOCK.SUBJECT_COLOR_MAP[actualSubj] || '#868e96';
+        const unitName = lesson.unitTitle || '';
+        return `
+          <td class="tt-subj${todayCls}"
+              style="background:${color}15;color:${color};position:relative;cursor:grab"
+              draggable="true"
+              data-slot-key="${slotKey}"
+              data-week="${weekStr}"
+              data-lesson-id="${lesson.id}"
+              title="${lesson.title} (${lesson.seq || lesson.globalSeq}차시)">
+            <div class="tt-subj-inner" style="pointer-events:none">
+              <span class="tt-subj-name">${actualSubj}</span>
+              ${unitName ? `<span class="tt-cell-unit">${unitName}</span>` : ''}
+              <span class="tt-subj-title">${lesson.title}</span>
+            </div>
+            <span class="ms ms-13 tt-math-drag-hint" style="position:absolute;bottom:5px;right:5px;opacity:0;transition:opacity .15s">drag_indicator</span>
+          </td>`;
+      }
+
+      // 차시 없는 평문 셀 (국어·도덕 등 비추적 과목)
+      if (!subj) return `<td class="tt-empty${todayCls}">-</td>`;
+      return `<td class="${todayCls}">${subj}</td>`;
     }).join('');
 
     return `<tr><td class="tt-period">${period + 1}</td>${cols}</tr>`;
   }).join('');
 
-  const mathSummary = slotLessons.filter(s => s.lesson).map(s => {
-    const u = MOCK.UNITS.find(u => u.id === s.lesson.unitId);
+  // 수학 요약 pills
+  const mathSlotList = MATH_SLOTS.map(s => {
+    const slotKey = `${s.day}-${s.period}`;
+    const slot = schedule[slotKey];
+    if (!slot || !slot.lessonId || slot.status === 'cancelled') return null;
+    const lesson = MOCK.ALL_LESSONS.find(l => l.id === slot.lessonId);
+    if (!lesson) return null;
+    const u = MOCK.UNITS.find(u => u.id === lesson.unitId);
+    const hasQuiz = !!quizUrls[lesson.id];
     return `<span style="display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:20px;background:${u.color}15;color:${u.color};font-size:11px;font-weight:600;cursor:pointer"
-      onclick="timetableOpenLesson(${s.lessonIdx})">
-      ${DAYS_KO[s.day]}요일 ${s.lesson.globalSeq}차시
-      ${s.hasQuiz ? '<span class="ms ms-12 ms-fill" style="color:#2f9e44">check_circle</span>' : ''}
+      onclick="calendarOpenPeriod('${weekStr}','${slotKey}')">
+      ${DAYS_KO[s.day]}요일 ${lesson.globalSeq}차시
+      ${hasQuiz ? '<span class="ms ms-12 ms-fill" style="color:#2f9e44">check_circle</span>' : ''}
     </span>`;
-  }).join('');
+  }).filter(Boolean).join('');
 
-  document.getElementById('timetable-section').innerHTML = `
+  const mathCount = MATH_SLOTS.filter(s => {
+    const sl = schedule[`${s.day}-${s.period}`];
+    return sl && sl.lessonId && sl.status !== 'cancelled';
+  }).length;
+
+  document.getElementById('calendar-section').innerHTML = `
     <div class="tt-card">
-      <div class="tt-card-header">
+      <div class="cal-header">
         <span class="ms ms-20" style="color:var(--blue)">calendar_today</span>
-        <span class="tt-card-title">${weekLabel}</span>
-        <span class="tt-week-label">수학 ${slotLessons.filter(s=>s.lesson).length}차시 예정</span>
+        <span class="tt-card-title">주간 수업 시간표</span>
+        <button class="cal-week-nav" id="cal-prev-week" title="이전 주">&#8249;</button>
+        <span class="cal-week-range" id="cal-week-label">${weekRangeLabel(weekStr)}</span>
+        <button class="cal-week-nav" id="cal-next-week" title="다음 주">&#8250;</button>
+        <span class="tt-week-label">수학 ${mathCount}차시 예정</span>
       </div>
       <div style="overflow-x:auto">
-        <table class="tt-table">
+        <table class="tt-table" id="cal-table">
           <thead><tr>${theadCols}</tr></thead>
           <tbody>${tbodyRows}</tbody>
         </table>
       </div>
-      <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:14px">${mathSummary}</div>
+      <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:14px">${mathSlotList}</div>
     </div>
   `;
+
+  // 주 탐색 버튼 이벤트
+  document.getElementById('cal-prev-week').addEventListener('click', () => {
+    renderCalendar(MOCK.offsetWeek(currentViewWeek, -1));
+  });
+  document.getElementById('cal-next-week').addEventListener('click', () => {
+    renderCalendar(MOCK.offsetWeek(currentViewWeek, 1));
+  });
+
+  // 드래그앤드롭 초기화
+  initDragDrop();
 }
 
-function timetableOpenLesson(lessonIdx) {
-  const lesson = MOCK.ALL_LESSONS[lessonIdx];
-  if (!lesson) return;
-  MOCK.goToLesson(lesson.globalSeq);
-  renderDashboard();
-  const pkg  = MOCK.getPackage(lesson);
-  const unit = MOCK.UNITS.find(u => u.id === lesson.unitId);
-  openModal(lesson, pkg, unit);
+function calendarOpenPeriod(weekStr, slotKey) {
+  const schedule = MOCK.getWeekSchedule(weekStr);
+  const slot = schedule[slotKey];
+  if (!slot || !slot.lessonId || slot.status === 'cancelled') return;
+
+  const found = MOCK.findLesson(slot.lessonId);
+  if (!found) return;
+  const { lesson, subject } = found;
+
+  if (subject === '수학') {
+    MOCK.goToLesson(lesson.globalSeq);
+    renderDashboard();
+    const pkg  = MOCK.getPackage(lesson);
+    const unit = MOCK.UNITS.find(u => u.id === lesson.unitId);
+    openModal(lesson, pkg, unit);
+  } else {
+    // 타 교과: 수학 진도는 건드리지 않고 바로 모달
+    const pkg  = MOCK.getSubjectPackage(lesson);
+    const units = MOCK.SUBJECT_UNITS[subject] || [];
+    const unit  = units.find(u => u.id === lesson.unitId) || { title: subject, color: MOCK.SUBJECT_COLOR_MAP[subject] || '#868e96' };
+    openModal(lesson, pkg, unit);
+  }
 }
+
+/* ──────────────────────────────────────────
+   Drag & Drop
+────────────────────────────────────────── */
+let _dragSrc = null;   // { weekStr, slotKey }
+let _isDragging = false;
+
+// 쓰레기통은 한 번만 설정 (renderCalendar 호출마다 재등록 방지)
+function initTrashZone() {
+  const trash = document.getElementById('trash-zone');
+  if (!trash || trash.dataset.init) return;
+  trash.dataset.init = '1';
+
+  trash.addEventListener('dragover', e => {
+    if (!_dragSrc) return;
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+    trash.classList.add('drag-over');
+  });
+
+  trash.addEventListener('dragleave', () => trash.classList.remove('drag-over'));
+
+  trash.addEventListener('drop', e => {
+    if (!_dragSrc) return;
+    e.preventDefault();
+    trash.classList.remove('drag-over');
+    const { weekStr, slotKey } = _dragSrc;
+    const sched = MOCK.getWeekSchedule(weekStr);
+    const found = MOCK.findLesson(sched[slotKey]?.lessonId);
+    const lessonTitle = found?.lesson?.title?.slice(0, 16) || '수업';
+    saveUndoSnapshot(weekStr);
+    MOCK.deleteSlot(weekStr, slotKey);
+    _dragSrc = null;
+    renderCalendar(weekStr);
+    showUndoBar(`"${lessonTitle}" 수업이 취소되었습니다`);
+  });
+}
+
+function initDragDrop() {
+  const table = document.getElementById('cal-table');
+  if (!table) return;
+
+  initTrashZone();
+
+  // dragstart
+  table.addEventListener('dragstart', e => {
+    const td = e.target.closest('td[draggable="true"]');
+    if (!td) return;
+    _isDragging = true;
+    _dragSrc = { weekStr: td.dataset.week, slotKey: td.dataset.slotKey };
+    e.dataTransfer.effectAllowed = 'move';
+    e.dataTransfer.setData('text/plain', td.dataset.slotKey);
+    td.classList.add('drag-source');
+    document.body.classList.add('dragging');
+  });
+
+  // dragend
+  table.addEventListener('dragend', () => {
+    document.body.classList.remove('dragging');
+    document.querySelectorAll('.drag-source,.drag-over').forEach(el => {
+      el.classList.remove('drag-source', 'drag-over');
+    });
+    setTimeout(() => { _isDragging = false; }, 0);
+  });
+
+  // dragover — 교과 셀 위 (교과 무관하게 스왑 가능, 단 draggable 셀만)
+  table.addEventListener('dragover', e => {
+    const td = e.target.closest('td[data-slot-key][draggable]');
+    if (!td || !_dragSrc) return;
+    if (td.dataset.slotKey === _dragSrc.slotKey) return;
+    if (td.dataset.week !== _dragSrc.weekStr) return;
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+    td.classList.add('drag-over');
+  });
+
+  table.addEventListener('dragleave', e => {
+    const td = e.target.closest('td[data-slot-key]');
+    if (td) td.classList.remove('drag-over');
+  });
+
+  // drop — 교과 무관 셀 스왑
+  table.addEventListener('drop', e => {
+    const td = e.target.closest('td[data-slot-key][draggable]');
+    if (!td || !_dragSrc) return;
+    const targetKey = td.dataset.slotKey;
+    if (targetKey === _dragSrc.slotKey) return;
+    e.preventDefault();
+    const weekStr = _dragSrc.weekStr;
+    const schedBefore = MOCK.getWeekSchedule(weekStr);
+    const aFound = MOCK.findLesson(schedBefore[_dragSrc.slotKey]?.lessonId);
+    const bFound = MOCK.findLesson(schedBefore[targetKey]?.lessonId);
+    const aTitle = (aFound?.lesson?.title || '').slice(0, 12);
+    const bTitle = (bFound?.lesson?.title || '').slice(0, 12);
+    saveUndoSnapshot(weekStr);
+    MOCK.swapSlots(weekStr, _dragSrc.slotKey, targetKey);
+    _dragSrc = null;
+    renderCalendar(weekStr);
+    showUndoBar(`수업 교환: ${aTitle || '(비어있음)'} ↔ ${bTitle || '(비어있음)'}`);
+  });
+
+  // 클릭 핸들러 (드래그가 아닌 경우에만)
+  table.addEventListener('click', e => {
+    if (_isDragging) return;
+    const td = e.target.closest('td[data-slot-key][draggable="true"]');
+    if (!td) return;
+    calendarOpenPeriod(td.dataset.week, td.dataset.slotKey);
+  });
+}
+
+/* ──────────────────────────────────────────
+   Undo
+────────────────────────────────────────── */
+let undoSnapshot = null;   // { weekStr, schedule: {...} }
+let undoTimer = null;
+
+function saveUndoSnapshot(weekStr) {
+  const current = MOCK.getWeekSchedule(weekStr);
+  undoSnapshot = { weekStr, schedule: JSON.parse(JSON.stringify(current)) };
+}
+
+function applyUndo() {
+  if (!undoSnapshot) return;
+  MOCK.saveWeekSchedule(undoSnapshot.weekStr, undoSnapshot.schedule);
+  const w = undoSnapshot.weekStr;
+  undoSnapshot = null;
+  clearTimeout(undoTimer);
+  renderCalendar(w);
+  hideUndoBar();
+}
+
+function showUndoBar(msg) {
+  clearTimeout(undoTimer);
+  document.getElementById('undo-msg').textContent = msg;
+  document.getElementById('undo-bar').classList.add('open');
+  undoTimer = setTimeout(hideUndoBar, 8000);
+}
+
+function hideUndoBar() {
+  clearTimeout(undoTimer);
+  document.getElementById('undo-bar').classList.remove('open');
+  undoSnapshot = null;
+}
+
+// Ctrl+Z 바인딩
+document.addEventListener('keydown', e => {
+  if ((e.ctrlKey || e.metaKey) && e.key === 'z' && undoSnapshot) {
+    e.preventDefault();
+    applyUndo();
+  }
+});
 
 /* ──────────────────────────────────────────
    Progress Header
 ────────────────────────────────────────── */
 function renderProgressHeader() {
-  const total     = MOCK.ALL_LESSONS.length;
-  const completed = MOCK.getCompletedSet();
-  const doneCnt   = completed.size;
-  const pct       = Math.round(doneCnt / total * 100);
-  const cur       = MOCK.getCurrentLesson();
-  const unit      = MOCK.UNITS.find(u => u.id === cur.unitId);
-  const unitDone  = unit.lessons.filter(l => completed.has(l.id)).length;
-  const unitPct   = Math.round(unitDone / unit.totalLessons * 100);
+  // 수학 진행 상태
+  const mathTotal     = MOCK.ALL_LESSONS.length;
+  const completed     = MOCK.getCompletedSet();
+  const mathDone      = completed.size;
+  const mathPct       = Math.round(mathDone / mathTotal * 100);
+  const cur           = MOCK.getCurrentLesson();
+  const curUnit       = MOCK.UNITS.find(u => u.id === cur.unitId);
 
-  document.getElementById('progress-header').innerHTML = `
+  // 전체 교과 진행률: 수학 기준 주차로 타 교과 예상 진행률 산출
+  const progress    = MOCK.getProgress();
+  const currentIdx  = progress.currentIdx;
+  const mathSlotsPerWeek = MOCK.getMathSlots().length; // 4
+  const currentWeek = Math.floor(currentIdx / mathSlotsPerWeek); // 0-indexed 주차
+
+  const SUBJECT_META = [
+    { name: '수학', total: mathTotal, done: mathDone, color: '#228be6', icon: 'calculate' },
+  ];
+  Object.entries(MOCK.SUBJECT_LESSONS).forEach(([name, lessons]) => {
+    const slotsPerWeek = (MOCK.SUBJECT_SLOTS[name] || []).length;
+    const expectedIdx  = slotsPerWeek > 0 ? Math.min(currentWeek * slotsPerWeek, lessons.length) : 0;
+    SUBJECT_META.push({
+      name,
+      total: lessons.length,
+      done: expectedIdx,
+      color: MOCK.SUBJECT_COLOR_MAP[name] || '#868e96',
+      icon: { 과학:'science', 사회:'public', 영어:'language', 체육:'sports_soccer', 미술:'palette', 실과:'handyman', 음악:'music_note' }[name] || 'book',
+    });
+  });
+
+  const subjCards = SUBJECT_META.map(s => {
+    const pct = s.total > 0 ? Math.round(s.done / s.total * 100) : 0;
+    return `
+      <div class="subj-progress-item">
+        <div class="spi-header">
+          <span class="ms ms-16" style="color:${s.color}">${s.icon}</span>
+          <span style="color:${s.color}">${s.name}</span>
+          <span class="spi-pct">${pct}%</span>
+        </div>
+        <div class="spi-bar"><div class="spi-bar-fill" style="width:${pct}%;background:${s.color}"></div></div>
+        <div class="spi-detail">${s.done}/${s.total}차시</div>
+      </div>`;
+  }).join('');
+
+  const _ph = document.getElementById('progress-header'); if(!_ph) return; _ph.innerHTML = `
     <div class="ph-top">
-      <div class="avatar-circle" style="width:44px;height:44px">
-        <span class="ms ms-24">calculate</span>
+      <div class="avatar-circle" style="width:40px;height:40px">
+        <span class="ms ms-22">school</span>
       </div>
       <div class="ph-info">
-        <h2>5학년 1학기 수학 진도 현황</h2>
-        <p>전체 ${total}차시 중 ${doneCnt}차시 완료</p>
+        <h2>5학년 1학기 전체 교과 진도 현황</h2>
+        <p>수학 기준 ${currentWeek + 1}주차 진행 중 · 수학 ${mathDone}/${mathTotal}차시 완료</p>
       </div>
       <div class="ph-spacer"></div>
-      <div class="ph-badge">전체 ${pct}%</div>
+      <div class="ph-badge">수학 ${mathPct}%</div>
     </div>
-    <div class="progress-unit">현재 단원: ${unit.title} (${unitDone}/${unit.totalLessons}차시)</div>
-    <div class="progress-bar-wrap" style="margin-bottom:6px">
-      <div class="progress-bar-fill" style="width:${unitPct}%;background:${unit.color}"></div>
-    </div>
-    <div class="progress-meta">
-      <span>${unit.title}</span>
-      <span>${unitDone}/${unit.totalLessons}차시 · ${unitPct}% 완료</span>
-    </div>
+    <div class="subj-progress-grid">${subjCards}</div>
   `;
 }
 
 function renderTopnavPill() {
-  const total   = MOCK.ALL_LESSONS.length;
-  const done    = MOCK.getCompletedSet().size;
-  const cur     = MOCK.getCurrentLesson();
-  document.getElementById('topnav-progress-pill').textContent =
-    `${done}/${total}차시 완료 · 현재 ${cur.globalSeq}차시`;
+  const total = MOCK.ALL_LESSONS.length;
+  const done  = MOCK.getCompletedSet().size;
+  const cur   = MOCK.getCurrentLesson();
+  const el    = document.getElementById('topnav-progress-pill');
+  if (el) el.textContent = `수학 ${done}/${total}차시 · 현재 ${cur.globalSeq}차시`;
 }
 
 /* ──────────────────────────────────────────
@@ -1665,7 +2319,7 @@ function renderHero() {
 
   const isLastLesson = lesson.globalSeq >= MOCK.ALL_LESSONS.length;
 
-  document.getElementById('hero-section').innerHTML = `
+  const _hs = document.getElementById('hero-section'); if(!_hs) return; _hs.innerHTML = `
     <div class="hero-card">
       <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;flex-wrap:wrap">
         <div class="hero-label" style="background:${unit.color}15;border-color:${unit.color}60;color:${unit.color}">
@@ -1709,7 +2363,7 @@ function renderHero() {
 function renderRecentCompleted() {
   const completed = MOCK.getCompletedSet();
   if (completed.size === 0) {
-    document.getElementById('recent-section').innerHTML = '';
+    const _rs = document.getElementById('recent-section'); if(_rs) _rs.innerHTML = '';
     return;
   }
   const recentLessons = MOCK.ALL_LESSONS
@@ -1739,7 +2393,7 @@ function renderRecentCompleted() {
     `;
   }).join('');
 
-  document.getElementById('recent-section').innerHTML = `
+  const _rs2 = document.getElementById('recent-section'); if(!_rs2) return; _rs2.innerHTML = `
     <div class="recent-card">
       <div class="card-title"><span class="ms ms-16">history</span> 최근 완료한 차시</div>
       ${items}
@@ -1788,7 +2442,7 @@ function renderCurriculumPanel() {
     `;
   }).join('');
 
-  document.getElementById('curriculum-card').innerHTML = `
+  const _cc = document.getElementById('curriculum-card'); if(!_cc) return; _cc.innerHTML = `
     <div class="card-title"><span class="ms ms-16">list</span> 전체 차시 목록</div>
     ${html}
   `;
@@ -1796,6 +2450,148 @@ function renderCurriculumPanel() {
 
 function toggleUnit(unitId) {
   const el = document.getElementById(`unit-${unitId}`);
+  if (el) el.classList.toggle('open');
+}
+
+/* ──────────────────────────────────────────
+   학습 결과 아코디언 (Section 4)
+────────────────────────────────────────── */
+function renderAccordion() {
+  const completed = MOCK.getCompletedSet();
+  const cur = MOCK.getCurrentLesson();
+  const progress = MOCK.getProgress();
+  const currentIdx = progress.currentIdx;
+  const mathSlotsPerWeek = MOCK.getMathSlots().length;
+  const currentWeek = Math.floor(currentIdx / mathSlotsPerWeek);
+
+  const SUBJ_ICON = {
+    수학:'calculate', 과학:'science', 사회:'public', 영어:'language',
+    체육:'sports_soccer', 미술:'palette', 실과:'handyman', 음악:'music_note',
+  };
+
+  // ── 수학 아코디언 아이템 ──
+  const mathTotal = MOCK.ALL_LESSONS.length;
+  const mathDone  = completed.size;
+  const mathPct   = Math.round(mathDone / mathTotal * 100);
+  const mathColor = '#228be6';
+
+  const mathUnitsHtml = MOCK.UNITS.map(unit => {
+    const unitDone = unit.lessons.filter(l => completed.has(l.id)).length;
+    const isOpen   = unit.id === cur?.unitId;
+    const lessonsHtml = unit.lessons.map(l => {
+      const isDone   = completed.has(l.id);
+      const isActive = l.id === cur?.id;
+      const icon = isDone
+        ? `<span class="ms ms-14 ms-fill" style="color:${unit.color}">check_circle</span>`
+        : isActive
+          ? `<span class="ms ms-14" style="color:${unit.color}">play_arrow</span>`
+          : `<span class="ms ms-12" style="color:var(--muted)">${lessonTypeIcon(l.type)}</span>`;
+      return `<div class="accordion-lesson-row" style="${!isDone&&!isActive?'opacity:.6':''}" onclick="jumpToLesson(${l.globalSeq})">
+        ${icon}
+        <span style="${isDone?'text-decoration:line-through;opacity:.55':isActive?'font-weight:700':''}">${l.seq}. ${l.title.length>22?l.title.slice(0,21)+'…':l.title}</span>
+      </div>`;
+    }).join('');
+
+    return `
+      <div class="accordion-unit ${isOpen?'open':''}" id="acc-unit-${unit.id}">
+        <div class="accordion-unit-header" onclick="toggleAccordionUnit('${unit.id}')">
+          <div class="accordion-unit-dot" style="background:${unit.color}"></div>
+          <span>${unit.title}</span>
+          <span class="accordion-unit-badge">${unitDone}/${unit.totalLessons}</span>
+          <span class="ms ms-16 accordion-chevron" style="margin-left:0">chevron_right</span>
+        </div>
+        <div class="accordion-unit-lessons">${lessonsHtml}</div>
+      </div>`;
+  }).join('');
+
+  // ── 타 교과 아코디언 아이템 ──
+  const otherSubjects = Object.entries(MOCK.SUBJECT_LESSONS).map(([name, lessons]) => {
+    const slotsPerWeek = (MOCK.SUBJECT_SLOTS[name] || []).length;
+    const expectedIdx  = slotsPerWeek > 0 ? Math.min(currentWeek * slotsPerWeek, lessons.length) : 0;
+    const pct = lessons.length > 0 ? Math.round(expectedIdx / lessons.length * 100) : 0;
+    const color = MOCK.SUBJECT_COLOR_MAP[name] || '#868e96';
+    const barColor = 'var(--blue)';
+    const icon  = SUBJ_ICON[name] || 'book';
+
+    // 이번 주 해당 과목 차시
+    const weekSchedule = MOCK.getWeekSchedule(currentViewWeek);
+    const thisWeekSlots = (MOCK.SUBJECT_SLOTS[name] || []).map(s => {
+      const key = `${s.day}-${s.period}`;
+      const slot = weekSchedule[key];
+      if (!slot || !slot.lessonId) return null;
+      const found = MOCK.findLesson(slot.lessonId);
+      return found ? { lesson: found.lesson, slotKey: key } : null;
+    }).filter(Boolean);
+
+    const weekLessonsHtml = thisWeekSlots.length > 0
+      ? thisWeekSlots.map(({ lesson, slotKey }) => `
+          <div class="accordion-lesson-row" onclick="calendarOpenPeriod('${currentViewWeek}','${slotKey}')">
+            <span class="ms ms-12" style="color:${color}">chevron_right</span>
+            <span>${lesson.seq}. ${lesson.title.length>24?lesson.title.slice(0,23)+'…':lesson.title}</span>
+            <span style="margin-left:auto;font-size:10px;color:var(--muted)">교과서 ${lesson.pages}쪽</span>
+          </div>`).join('')
+      : `<div style="font-size:11px;color:var(--muted);padding:6px 0">이번 주 차시 없음</div>`;
+
+    return `
+      <div class="accordion-item" id="acc-subj-${name}">
+        <div class="accordion-item-header" onclick="toggleAccordionSubj('${name}')">
+          <div class="accordion-subj-icon" style="background:var(--blue-lt)">
+            <span class="ms ms-18" style="color:var(--blue)">${icon}</span>
+          </div>
+          <span class="accordion-subj-name">${name}</span>
+          <div class="accordion-subj-bar-wrap">
+            <div class="accordion-subj-bar-fill" style="width:${pct}%;background:${barColor}"></div>
+          </div>
+          <span class="accordion-subj-pct">${pct}%</span>
+          <span class="accordion-subj-count">${expectedIdx}/${lessons.length}</span>
+          <span class="ms ms-18 accordion-chevron">chevron_right</span>
+        </div>
+        <div class="accordion-body">
+          <div style="font-size:11px;font-weight:700;color:var(--muted);margin-bottom:4px">이번 주 수업</div>
+          ${weekLessonsHtml}
+        </div>
+      </div>`;
+  }).join('');
+
+  document.getElementById('accordion-section').innerHTML = `
+    <div class="accordion-card">
+      <div class="accordion-header-row">
+        <span class="ms ms-18" style="color:var(--blue)">bar_chart</span>
+        학습 결과 모아보기
+        <span style="margin-left:auto;font-size:12px;font-weight:400;color:var(--muted)">수학 ${mathDone}/${mathTotal}차시 · ${mathPct}%</span>
+      </div>
+
+      <!-- 수학 -->
+      <div class="accordion-item open" id="acc-subj-수학">
+        <div class="accordion-item-header" onclick="toggleAccordionSubj('수학')">
+          <div class="accordion-subj-icon" style="background:var(--blue-lt)">
+            <span class="ms ms-18" style="color:var(--blue)">calculate</span>
+          </div>
+          <span class="accordion-subj-name">수학</span>
+          <div class="accordion-subj-bar-wrap">
+            <div class="accordion-subj-bar-fill" style="width:${mathPct}%;background:var(--blue)"></div>
+          </div>
+          <span class="accordion-subj-pct">${mathPct}%</span>
+          <span class="accordion-subj-count">${mathDone}/${mathTotal}</span>
+          <span class="ms ms-18 accordion-chevron">chevron_right</span>
+        </div>
+        <div class="accordion-body">
+          ${mathUnitsHtml}
+        </div>
+      </div>
+
+      ${otherSubjects}
+    </div>
+  `;
+}
+
+function toggleAccordionSubj(name) {
+  const el = document.getElementById(`acc-subj-${name}`);
+  if (el) el.classList.toggle('open');
+}
+
+function toggleAccordionUnit(unitId) {
+  const el = document.getElementById(`acc-unit-${unitId}`);
   if (el) el.classList.toggle('open');
 }
 
@@ -1823,7 +2619,9 @@ function completeLesson(lessonId) {
    Package Modal
 ────────────────────────────────────────── */
 function openModal(lesson, pkg, unit) {
-  const tb = pkg.thinkbell;
+  if (!pkg) return;  // pkg 생성 실패 방어
+  if (!lesson.tags) lesson = { ...lesson, tags: [] };  // tags 없는 타교과 방어
+  const tb = pkg.thinkbell || { board: null, quiz: null };
   const savedQuiz = MOCK.getQuizUrls()[lesson.id];
 
   /* ── 기존 자료 목록 ── */
@@ -1892,9 +2690,9 @@ function openModal(lesson, pkg, unit) {
   document.getElementById('modal-content').innerHTML = `
     <div class="modal-header">
       <div class="modal-header-info">
-        <div class="modal-unit" style="color:${unit.color}">${lesson.globalSeq}차시 · ${unit.shortTitle}</div>
+        <div class="modal-unit" style="color:${unit.color}">${pkg.subject ? pkg.subject + ' · ' : ''}${pkg.seq} · ${unit.shortTitle || unit.title}</div>
         <div class="modal-title">${lesson.title}</div>
-        <div class="modal-seq">${pkg.seq} · 교과서 ${lesson.pages}쪽</div>
+        <div class="modal-seq">교과서 ${lesson.pages}쪽</div>
       </div>
       <button class="modal-close" id="btn-modal-close"><span class="ms ms-20">close</span></button>
     </div>
@@ -1913,33 +2711,44 @@ function openModal(lesson, pkg, unit) {
         참여형 활동 자료
       </div>
       <div class="thinkbell-btns">
+        ${tb.board ? `
         <a class="thinkbell-btn" href="${tb.board.url}" target="_blank" rel="noopener">
           <span class="thinkbell-btn-icon ms ms-20">dashboard</span>
           <span class="thinkbell-btn-title">${tb.board.title}</span>
           <span class="thinkbell-btn-badge">보드형</span>
           <span class="thinkbell-btn-arrow ms ms-18">open_in_new</span>
-        </a>
+        </a>` : ''}
         ${quizSection}
       </div>
     </div>
 
     <div class="modal-cta">
-      <button class="btn-adopt" id="btn-adopt" style="background:${unit.color};box-shadow:0 2px 8px ${unit.color}40">
-        <span class="ms ms-18 ms-fill" style="vertical-align:middle;margin-right:4px">check_circle</span> 차시 완료
-      </button>
-      <button class="btn-skip" id="btn-skip">
-        <span class="ms ms-18" style="vertical-align:middle;margin-right:4px">skip_next</span> 건너뛰기
-      </button>
+      ${pkg.subject && pkg.subject !== '수학' ? `
+        <button class="btn-skip" id="btn-adopt" style="background:${unit.color || '#495057'};color:#fff;border-color:transparent;box-shadow:0 2px 8px rgba(0,0,0,.15)">
+          <span class="ms ms-18" style="vertical-align:middle;margin-right:4px">close</span> 닫기
+        </button>
+      ` : `
+        <button class="btn-adopt" id="btn-adopt" style="background:${unit.color};box-shadow:0 2px 8px ${unit.color}40">
+          <span class="ms ms-18 ms-fill" style="vertical-align:middle;margin-right:4px">check_circle</span> 차시 완료
+        </button>
+        <button class="btn-skip" id="btn-skip">
+          <span class="ms ms-18" style="vertical-align:middle;margin-right:4px">skip_next</span> 건너뛰기
+        </button>
+      `}
     </div>
   `;
 
   document.getElementById('btn-modal-close').addEventListener('click', closeModal);
-  document.getElementById('btn-adopt').addEventListener('click', () => { closeModal(); completeLesson(lesson.id); });
-  document.getElementById('btn-skip').addEventListener('click', () => {
-    closeModal();
-    const next = MOCK.goToLesson(lesson.globalSeq + 1);
-    if (next) renderDashboard();
-  });
+  if (pkg.subject && pkg.subject !== '수학') {
+    document.getElementById('btn-adopt').addEventListener('click', closeModal);
+  } else {
+    document.getElementById('btn-adopt').addEventListener('click', () => { closeModal(); completeLesson(lesson.id); });
+    document.getElementById('btn-skip').addEventListener('click', () => {
+      closeModal();
+      const next = MOCK.goToLesson(lesson.globalSeq + 1);
+      if (next) renderDashboard();
+    });
+  }
 
   document.getElementById('pkg-modal').classList.add('open');
 }
@@ -1989,6 +2798,19 @@ function setQuizWrapDone(wrap, quizUrl, playUrl, quizConfig, lessonId) {
 
 async function autoGenerateQuiz(lessonId, quizConfig, silent = false) {
   const wrap = silent ? null : document.getElementById('quiz-section-wrap');
+
+  if (window.location.protocol === 'file:') {
+    if (wrap) {
+      const cfg = JSON.stringify(quizConfig).replace(/"/g, '&quot;');
+      wrap.innerHTML = `
+        <div class="thinkbell-btn" style="border-color:#ffe066;background:#fffbe6;width:100%;cursor:default;pointer-events:none">
+          <span class="thinkbell-btn-icon ms ms-20" style="color:#e67700">info</span>
+          <span class="thinkbell-btn-title" style="color:#865500">로컬 파일에서는 퀴즈 자동 생성을 사용할 수 없습니다. 웹 서버(http://)로 접속해 주세요.</span>
+        </div>`;
+    }
+    return;
+  }
+
   if (wrap) setQuizWrapLoading(wrap);
 
   try {
@@ -2082,6 +2904,14 @@ function initQuizGenerator() {
   async function doGenerate() {
     const topic = input.value.trim();
     if (!topic) { input.focus(); return; }
+
+    // file:// 프로토콜에서는 API 호출이 CORS 정책으로 차단됨
+    if (window.location.protocol === 'file:') {
+      status.textContent = '로컬 파일에서는 API를 사용할 수 없습니다. 웹 서버(http://)로 접속해 주세요.';
+      status.style.color = 'var(--amber)';
+      return;
+    }
+
     btn.disabled = true;
     input.disabled = true;
     status.textContent = 'Claude가 10개 문항 생성 중…';
@@ -2125,5 +2955,18 @@ fetch('data/quiz_cache.json?t=' + Date.now())
   .catch(() => {})
   .finally(() => { boot(); initQuizGenerator(); });
 </script>
+
+<!-- 쓰레기통 존: 드래그 중에만 표시 -->
+<div id="trash-zone">
+  <span class="ms ms-24">delete</span>
+  <span>여기에 놓으면 해당 수업이 취소됩니다</span>
+</div>
+
+<!-- 실행 취소 바 -->
+<div id="undo-bar">
+  <span id="undo-msg"></span>
+  <button id="undo-bar-btn" onclick="applyUndo()">실행 취소</button>
+  <button id="undo-bar-dismiss" onclick="hideUndoBar()" aria-label="닫기">×</button>
+</div>
 </body>
 </html>
