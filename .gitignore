@@ -11,3 +11,13 @@ Thumbs.db
 .idea/
 *.swp
 *.swo
+
+# Node
+node_modules/
+playwright-server/node_modules/
+
+# 인증/세션 파일 (민감정보)
+playwright-server/auth.json
+playwright-server/tkbell_auth.json
+playwright-server/*.json
+!playwright-server/package.json
