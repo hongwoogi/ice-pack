@@ -114,6 +114,25 @@ UNITS.forEach(unit => {
   });
 });
 
+/* 문항 유형 레이블 */
+const TYPE_LABEL = {
+  'multiple-choice': '선택형',
+  'ox':              'OX',
+  'short-answer':    '단답형',
+  'fill-in-blank':   '빈칸',
+};
+
+function typeDistSummary(questions) {
+  const counts = {};
+  questions.forEach(q => {
+    const t = q.type || 'multiple-choice';
+    counts[t] = (counts[t] || 0) + 1;
+  });
+  return Object.entries(counts)
+    .map(([t, n]) => `${TYPE_LABEL[t] || t}×${n}`)
+    .join(', ');
+}
+
 /* ── API 호출 ── */
 function generateQuiz(topic) {
   return new Promise((resolve, reject) => {
@@ -169,9 +188,17 @@ function generateQuiz(topic) {
       try {
         const data = await generateQuiz(lesson.topic);
         if (!data.success || !data.quizUrl) throw new Error(data.error || '응답 오류');
-        cache[lesson.id] = { quizUrl: data.quizUrl, playUrl: data.playUrl, quizIdx: String(data.quizIdx) };
+        const questions = data.questions || [];
+        const typeDist  = questions.length ? typeDistSummary(questions) : '유형정보 없음';
+        cache[lesson.id] = {
+          quizUrl:   data.quizUrl,
+          playUrl:   data.playUrl,
+          quizIdx:   String(data.quizIdx),
+          typesDist: typeDist,
+          questions: questions.map(q => ({ type: q.type || 'multiple-choice', q: q.q })),
+        };
         fs.writeFileSync(CACHE_FILE, JSON.stringify(cache, null, 2), 'utf8');
-        console.log(`완료 (quizIdx: ${data.quizIdx})`);
+        console.log(`완료 (quizIdx: ${data.quizIdx}) [${typeDist}]`);
         success = true;
       } catch (e) {
         process.stdout.write(`실패(${attempts}) `);

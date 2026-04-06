@@ -2635,6 +2635,12 @@ function openModal(lesson, pkg, unit) {
     const quizConfigJson = JSON.stringify(tb.quiz).replace(/"/g, '&quot;');
     if (savedQuiz) {
       /* 이미 생성된 퀴즈 — 바로 링크 + 재생성 버튼 */
+      const TYPE_KO = { 'multiple-choice':'선택형', ox:'OX', 'short-answer':'단답형', 'fill-in-blank':'빈칸' };
+      const typeBadges = savedQuiz.typesDist
+        ? savedQuiz.typesDist.split(', ').map(t =>
+            `<span style="font-size:10px;padding:2px 6px;border-radius:10px;background:var(--blue-lt);color:var(--blue)">${t}</span>`
+          ).join('')
+        : '';
       quizSection = `
         <div id="quiz-section-wrap">
           <a class="thinkbell-btn" href="${savedQuiz.quizUrl}" target="_blank" rel="noopener"
@@ -2644,6 +2650,7 @@ function openModal(lesson, pkg, unit) {
             <span class="thinkbell-btn-badge" style="background:#ebfbee;color:var(--green);border-color:var(--green-b)">퀴즈 열기</span>
             <span class="thinkbell-btn-arrow ms ms-18" style="color:var(--green)">open_in_new</span>
           </a>
+          ${typeBadges ? `<div style="display:flex;gap:4px;flex-wrap:wrap;padding:4px 2px">${typeBadges}</div>` : ''}
           <div style="display:flex;gap:8px;margin-top:0">
             <a class="thinkbell-btn" href="${savedQuiz.playUrl}" target="_blank" rel="noopener"
                style="flex:1;margin-top:0">
@@ -2857,10 +2864,25 @@ function renderQuizResults() {
   `).join('');
 }
 
+function copyText(text) {
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    return navigator.clipboard.writeText(text);
+  }
+  /* HTTP 환경 fallback */
+  const ta = Object.assign(document.createElement('textarea'), {
+    value: text, style: 'position:fixed;left:-9999px;top:-9999px;opacity:0'
+  });
+  document.body.appendChild(ta);
+  ta.focus(); ta.select();
+  document.execCommand('copy');
+  document.body.removeChild(ta);
+  return Promise.resolve();
+}
+
 function shareQuiz(i) {
   const q = generatedQuizzes[i];
   if (!q) return;
-  navigator.clipboard.writeText(q.playUrl).then(() => {
+  copyText(q.playUrl).then(() => {
     const btns = document.querySelectorAll('.qr-share-btn');
     const btn = btns[i * 2];
     if (btn) { btn.innerHTML = '복사됨'; setTimeout(() => btn.innerHTML = '<span class="ms ms-14" style="vertical-align:middle;margin-right:2px">link</span>링크 복사', 2000); }
@@ -2895,8 +2917,38 @@ function initQuizGenerator() {
 
     btn.disabled = true;
     input.disabled = true;
-    status.textContent = 'Claude가 10개 문항 생성 중…';
-    status.style.color = 'var(--muted)';
+
+    const STEPS = [
+      { icon: 'smart_toy',   label: 'Claude AI가 문제를 만들고 있어요…',   color: '#7950f2' },
+      { icon: 'edit_note',   label: '문제 완성! 띵커벨에 등록하는 중…',    color: '#f59f00' },
+      { icon: 'check_circle',label: '퀴즈 생성 완료!',                      color: '#2f9e44' },
+    ];
+
+    function renderStepUI(stepNum, label) {
+      const steps = STEPS.map((s, i) => {
+        const active  = i + 1 === stepNum;
+        const done    = i + 1 < stepNum;
+        const opacity = done || active ? '1' : '0.3';
+        const icon    = done ? 'check_circle' : s.icon;
+        const spin    = active && i < 2 ? ' rotating' : '';
+        return `<div style="display:flex;align-items:center;gap:6px;opacity:${opacity}">
+          <span class="ms ms-18${spin} ms-fill" style="color:${s.color}">${icon}</span>
+          <span style="font-size:12px;color:${active ? s.color : 'var(--muted)'};font-weight:${active?'600':'400'}">${label && active ? label : s.label}</span>
+        </div>`;
+      }).join('');
+      status.innerHTML = `<div style="display:flex;flex-direction:column;gap:6px;padding:10px 12px;background:var(--ice);border-radius:8px;margin-top:4px">${steps}</div>`;
+    }
+
+    renderStepUI(1, null);
+
+    /* 서버 진행 상황 폴링 */
+    let pollTimer = setInterval(async () => {
+      try {
+        const s = await fetch('/api/tkbell/quiz-status').then(r => r.json());
+        if (s.step >= 1) renderStepUI(s.step, s.label);
+      } catch (_) {}
+    }, 1500);
+
     try {
       const res = await fetch(QUIZ_GEN_API, {
         method: 'POST',
@@ -2910,14 +2962,19 @@ function initQuizGenerator() {
         quizUrl: data.quizUrl, playUrl: data.playUrl,
         count: data.questionCount || data.questions?.length || 10,
       });
+      renderStepUI(3, null);
       renderQuizResults();
-      status.textContent = `"${data.topic}" 퀴즈 생성 완료! (quizIdx: ${data.quizIdx})`;
-      status.style.color = 'var(--green)';
+      setTimeout(() => {
+        status.innerHTML = `<span style="color:var(--green);font-size:12px">
+          <span class="ms ms-14 ms-fill" style="vertical-align:middle;color:var(--green)">check_circle</span>
+          "${data.topic}" 퀴즈 생성 완료!</span>`;
+      }, 800);
       input.value = '';
     } catch(e) {
-      status.textContent = `오류: ${e.message}`;
-      status.style.color = 'var(--red)';
+      status.innerHTML = `<span style="color:var(--red);font-size:12px">
+        <span class="ms ms-14" style="vertical-align:middle">error</span> 오류: ${e.message}</span>`;
     } finally {
+      clearInterval(pollTimer);
       btn.disabled = false;
       input.disabled = false;
     }
