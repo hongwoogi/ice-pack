@@ -149,13 +149,16 @@ app.post('/tkbell/generate-quiz', async (req, res) => {
     setStep(1, `Claude AI가 "${topic.trim()}" 문제 ${count}개를 생성하고 있어요…`);
     const prompt = `너는 한국 초등학교 교사를 위한 퀴즈 생성 전문가야.
 주제: "${topic.trim()}"
-위 주제로 총 ${count}개의 문제를 만들어줘. 아래 4가지 유형을 골고루 섞어서 만들어:
+위 주제로 총 ${count}개의 문제를 만들어줘. 아래 7가지 유형을 골고루 섞어서 만들어:
 
 유형 분배 (${count}문항 기준):
-- multiple-choice(선택형 4지선다): ${Math.ceil(count * 0.5)}개
-- ox(O/X 퀴즈): ${Math.round(count * 0.2)}개
-- short-answer(단답형): ${Math.round(count * 0.2)}개
-- fill-in-blank(빈칸채우기): ${Math.floor(count * 0.1)}개
+- multiple-choice(선택형 4지선다): ${Math.ceil(count * 0.3)}개
+- ox(O/X 퀴즈): ${Math.round(count * 0.15)}개
+- short-answer(단답형): ${Math.round(count * 0.15)}개
+- fill-in-blank(빈칸채우기): ${Math.round(count * 0.1)}개
+- essay(서술형): ${Math.round(count * 0.1)}개
+- ordering(순서형): ${Math.round(count * 0.1)}개
+- line-match(선잇기형): ${Math.floor(count * 0.1)}개
 
 반드시 아래 JSON 배열 형식으로만 응답해. 다른 텍스트, 설명, 마크다운 코드블록은 절대 포함하지 마. 순수 JSON 배열만.
 
@@ -163,7 +166,10 @@ app.post('/tkbell/generate-quiz', async (req, res) => {
   {"type":"multiple-choice","q":"문제","answers":["보기1","보기2","보기3","보기4"],"correct":0},
   {"type":"ox","q":"문제","answer":"O"},
   {"type":"short-answer","q":"문제","acceptedAnswers":["정답1","정답2"]},
-  {"type":"fill-in-blank","q":"다음 빈칸에 알맞은 말을 쓰시오.","prompt":"빈칸 앞뒤 문장 전체 (예: 12의 약수 중 가장 큰 것은 ___ 이다.)","acceptedAnswers":["12"]}
+  {"type":"fill-in-blank","q":"다음 빈칸에 알맞은 말을 쓰시오.","prompt":"빈칸(___)이 포함된 완전한 문장","acceptedAnswers":["정답"]},
+  {"type":"essay","q":"다음에 대해 설명하시오.","exampleAnswer":"예시 답안 텍스트"},
+  {"type":"ordering","q":"다음을 올바른 순서로 배열하시오.","items":["첫번째","두번째","세번째","네번째"]},
+  {"type":"line-match","q":"알맞게 연결하시오.","pairs":[{"left":"왼쪽1","right":"오른쪽1"},{"left":"왼쪽2","right":"오른쪽2"},{"left":"왼쪽3","right":"오른쪽3"}]}
 ]
 
 규칙:
@@ -171,7 +177,10 @@ app.post('/tkbell/generate-quiz', async (req, res) => {
 - multiple-choice: 보기 4개, correct는 0~3 인덱스, 오답도 그럴듯하게
 - ox: answer는 반드시 "O" 또는 "X"
 - short-answer: acceptedAnswers에 가능한 정답 모두 포함 (유사 표현 포함)
-- fill-in-blank: prompt는 빈칸(___)이 포함된 완전한 문장, acceptedAnswers에 정답 포함`;
+- fill-in-blank: prompt는 빈칸(___)이 포함된 완전한 문장, acceptedAnswers에 정답 포함
+- essay: exampleAnswer에 모범 답안 제공 (결과에 반영 안 됨, 학생 참고용)
+- ordering: items 배열이 정답 순서, 3~5개 항목
+- line-match: pairs는 3~4쌍, 좌우 항목이 서로 대응되는 내용`;
 
     const raw = await claudeAsk(prompt);
     const jsonStr = raw.replace(/^```(?:json)?\n?/m, '').replace(/\n?```$/m, '').trim();

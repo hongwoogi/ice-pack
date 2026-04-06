@@ -2635,7 +2635,7 @@ function openModal(lesson, pkg, unit) {
     const quizConfigJson = JSON.stringify(tb.quiz).replace(/"/g, '&quot;');
     if (savedQuiz) {
       /* 이미 생성된 퀴즈 — 바로 링크 + 재생성 버튼 */
-      const TYPE_KO = { 'multiple-choice':'선택형', ox:'OX', 'short-answer':'단답형', 'fill-in-blank':'빈칸' };
+      const TYPE_KO = { 'multiple-choice':'선택형', ox:'OX', 'short-answer':'단답형', 'fill-in-blank':'빈칸', 'essay':'서술형', 'ordering':'순서형', 'line-match':'선잇기' };
       const typeBadges = savedQuiz.typesDist
         ? savedQuiz.typesDist.split(', ').map(t =>
             `<span style="font-size:10px;padding:2px 6px;border-radius:10px;background:var(--blue-lt);color:var(--blue)">${t}</span>`

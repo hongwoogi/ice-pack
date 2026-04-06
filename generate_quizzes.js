@@ -120,6 +120,9 @@ const TYPE_LABEL = {
   'ox':              'OX',
   'short-answer':    '단답형',
   'fill-in-blank':   '빈칸',
+  'essay':           '서술형',
+  'ordering':        '순서형',
+  'line-match':      '선잇기',
 };
 
 function typeDistSummary(questions) {

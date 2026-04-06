@@ -1,17 +1,28 @@
 /**
  * tkbell_make_quiz.js
- * 지원 유형: Q1(선택형), Q2(OX), Q3(단답형), Q5(빈칸채우기)
+ * 지원 유형: Q1(선택형), Q2(OX), Q3(단답형), Q4(서술형), Q5(빈칸채우기), Q7(순서형), Q9(선잇기형)
  *
  * questions 항목 형식:
- *   선택형: { type:'multiple-choice', q, answers:[], correct:0 }
- *   OX형:   { type:'ox',             q, answer:'O'|'X' }
- *   단답형: { type:'short-answer',   q, acceptedAnswers:[] }
- *   빈칸:   { type:'fill-in-blank',  q, prompt, acceptedAnswers:[] }
+ *   선택형:   { type:'multiple-choice', q, answers:[], correct:0 }
+ *   OX형:     { type:'ox',             q, answer:'O'|'X' }
+ *   단답형:   { type:'short-answer',   q, acceptedAnswers:[] }
+ *   빈칸:     { type:'fill-in-blank',  q, prompt, acceptedAnswers:[] }
+ *   서술형:   { type:'essay',          q, exampleAnswer:'' }
+ *   순서형:   { type:'ordering',       q, items:[] }
+ *   선잇기형: { type:'line-match',     q, pairs:[{left,right},...] }
  *   (type 생략 시 multiple-choice 로 처리)
  */
 const { chromium } = require('playwright');
 
-const QCD = { 'multiple-choice': 'Q1', ox: 'Q2', 'short-answer': 'Q3', 'fill-in-blank': 'Q5' };
+const QCD = {
+  'multiple-choice': 'Q1',
+  'ox':              'Q2',
+  'short-answer':    'Q3',
+  'essay':           'Q4',
+  'fill-in-blank':   'Q5',
+  'ordering':        'Q7',
+  'line-match':      'Q9',
+};
 
 function getType(q) {
   return q.type || 'multiple-choice';
@@ -108,6 +119,63 @@ async function fillBlank(page, rowSel, q) {
   return waitForSaveByEval(page, rowSel);
 }
 
+/* Q4: 서술형 — 문제 + 예시 답안 */
+async function fillEssay(page, rowSel, q) {
+  const row = page.locator(rowSel);
+  await row.locator('textarea[name="questionTitle"]').fill(q.q);
+  const example = q.exampleAnswer || q.example || '';
+  if (example) {
+    await row.locator('textarea[name="answerValueArray"]').fill(example);
+  }
+  return waitForSaveByEval(page, rowSel);
+}
+
+/* Q7: 순서형 — 항목을 올바른 순서로 입력, answerSeqArray에 순서값 지정 */
+async function fillOrdering(page, rowSel, q) {
+  const row = page.locator(rowSel);
+  await row.locator('textarea[name="questionTitle"]').fill(q.q);
+  const items = q.items || [];
+  for (let i = 0; i < items.length; i++) {
+    const ta = row.locator('textarea[name="answerTitleArray"]').nth(i);
+    if (await ta.count()) await ta.fill(items[i]);
+  }
+  // answerSeqArray: 각 항목의 정답 순서 (입력 순서 그대로 1,2,3...)
+  await page.evaluate(({ sel, count }) => {
+    const row = document.querySelector(sel);
+    const seqInputs = row.querySelectorAll('input[name="answerSeqArray"]');
+    seqInputs.forEach((inp, i) => { if (i < count) inp.value = String(i + 1); });
+  }, { sel: rowSel, count: items.length });
+  await page.waitForTimeout(800);
+  return waitForSaveByEval(page, rowSel);
+}
+
+/* Q9: 선잇기형 — 좌/우 항목 쌍 입력, lineAnswerSeqArray로 연결 */
+async function fillLineMatch(page, rowSel, q) {
+  const row = page.locator(rowSel);
+  await row.locator('textarea[name="questionTitle"]').fill(q.q);
+  const pairs = q.pairs || [];
+  // 좌측 항목 입력
+  for (let i = 0; i < pairs.length; i++) {
+    const ta = row.locator('textarea[name="answerLeftTitleArray"]').nth(i);
+    if (await ta.count()) await ta.fill(pairs[i].left);
+  }
+  // 우측 항목 입력
+  for (let i = 0; i < pairs.length; i++) {
+    const ta = row.locator('textarea[name="answerRightTitleArray"]').nth(i);
+    if (await ta.count()) await ta.fill(pairs[i].right);
+  }
+  // lineAnswerSeqArray: 좌측[i]가 연결되는 우측 값(A, B, C...)
+  // pairs 순서대로 1:1 연결 (left[0]→right[0]=A, left[1]→right[1]=B ...)
+  const rightValues = ['A','B','C','D','E'];
+  await page.evaluate(({ sel, count, rightValues }) => {
+    const row = document.querySelector(sel);
+    const lineInputs = row.querySelectorAll('input[name="lineAnswerSeqArray"]');
+    lineInputs.forEach((inp, i) => { if (i < count) inp.value = rightValues[i]; });
+  }, { sel: rowSel, count: pairs.length, rightValues });
+  await page.waitForTimeout(800);
+  return waitForSaveByEval(page, rowSel);
+}
+
 async function createQuiz({ title, questions }) {
   if (!questions || questions.length === 0) throw new Error('questions[] is required');
 
@@ -171,11 +239,14 @@ async function createQuiz({ title, questions }) {
 
       console.log(`[${i+1}/${questions.length}] type=${type} q=${rawQ.q.slice(0, 30)}`);
 
-      if (type === 'multiple-choice')  await fillMultipleChoice(page, rowSel, rawQ);
-      else if (type === 'ox')          await fillOX(page, rowSel, rawQ);
-      else if (type === 'short-answer') await fillShortAnswer(page, rowSel, rawQ);
-      else if (type === 'fill-in-blank') await fillBlank(page, rowSel, rawQ);
-      else                              await fillMultipleChoice(page, rowSel, rawQ); // fallback
+      if      (type === 'multiple-choice') await fillMultipleChoice(page, rowSel, rawQ);
+      else if (type === 'ox')              await fillOX(page, rowSel, rawQ);
+      else if (type === 'short-answer')    await fillShortAnswer(page, rowSel, rawQ);
+      else if (type === 'fill-in-blank')   await fillBlank(page, rowSel, rawQ);
+      else if (type === 'essay')           await fillEssay(page, rowSel, rawQ);
+      else if (type === 'ordering')        await fillOrdering(page, rowSel, rawQ);
+      else if (type === 'line-match')      await fillLineMatch(page, rowSel, rawQ);
+      else                                 await fillMultipleChoice(page, rowSel, rawQ); // fallback
 
       await page.waitForTimeout(500);
     }
